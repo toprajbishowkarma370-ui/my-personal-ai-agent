@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0b1020" />
+  <title>My Personal AI Business Agent</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --panel-soft: #f8faff;
+      --line: #e5e9f2;
+      --text: #111827;
+      --muted: #68738a;
+      --subtle: #98a2b3;
+      --navy: #10172e;
+      --purple: #6957f5;
+      --purple-dark: #5544dd;
+      --purple-soft: #f0edff;
+      --cyan: #21b7d7;
+      --green: #23a56d;
+      --green-soft: #eaf8f1;
+      --orange: #e8892f;
+      --orange-soft: #fff5e9;
+      --red: #d85865;
+      --shadow: 0 18px 50px rgba(22, 30, 58, .08);
+      --shadow-sm: 0 5px 18px rgba(22, 30, 58, .06);
+      --radius: 16px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 14px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    button, input, textarea, select { font: inherit; }
+    button { cursor: pointer; }
+    .app { min-height: 100vh; display: flex; }
+    .sidebar {
+      width: 260px;
+      min-height: 100vh;
+      background: var(--navy);
+      color: #fff;
+      padding: 25px 15px 18px;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      inset: 0 auto 0 0;
+      z-index: 20;
+    }
+    .brand { display: flex; align-items: center; gap: 11px; padding: 0 11px 28px; }
+    .brand-mark {
+      width: 34px; height: 34px; border-radius: 11px;
+      display: grid; place-items: center;
+      background: linear-gradient(135deg, #8e7dff, #35cce2);
+      box-shadow: 0 0 25px rgba(112, 99, 255, .45);
+      font-weight: 800;
+    }
+    .brand strong { display: block; font-size: 14px; letter-spacing: -.2px; }
+    .brand span { display: block; color: #9da6c7; font-size: 11px; margin-top: 1px; }
+    .nav-label { color: #697498; text-transform: uppercase; letter-spacing: .11em; font-size: 10px; padding: 15px 12px 8px; }
+    .nav { display: grid; gap: 4px; }
+    .nav button {
+      border: 0; color: #aab2cc; background: transparent; text-align: left;
+      padding: 11px 12px; border-radius: 10px; display: flex; align-items: center; gap: 12px;
+      transition: .2s;
+    }
+    .nav button:hover, .nav button.active { color: #fff; background: rgba(255,255,255,.09); }
+    .nav button.active { box-shadow: inset 3px 0 var(--purple); }
+    .icon { width: 18px; height: 18px; display: inline-grid; place-items: center; font-size: 16px; }
+    .nav-badge { margin-left: auto; font-size: 10px; padding: 2px 6px; border-radius: 20px; background: #312e69; color: #d4ceff; }
+    .sidebar-bottom { margin-top: auto; }
+    .upgrade {
+      margin: 18px 7px; padding: 15px; border-radius: 13px;
+      background: linear-gradient(145deg, #232a55, #1a2042); border: 1px solid #343b69;
+    }
+    .upgrade small { color: #aeb8de; }
+    .upgrade b { display: block; margin: 7px 0 11px; font-size: 13px; }
+    .upgrade button { width: 100%; border: 0; border-radius: 8px; padding: 8px; color: #fff; background: var(--purple); }
+    .profile { border-top: 1px solid #2b3357; padding: 16px 8px 3px; display: flex; align-items: center; gap: 9px; }
+    .avatar { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; background: #e9c59c; color: #623f2d; font-weight: 700; }
+    .profile div:nth-child(2) { flex: 1; }
+    .profile strong { font-size: 12px; display: block; }
+    .profile small { color: #8e98b9; font-size: 10px; }
+    .main { width: calc(100% - 260px); margin-left: 260px; }
+    .topbar {
+      height: 70px; background: rgba(255,255,255,.83); backdrop-filter: blur(13px);
+      border-bottom: 1px solid var(--line); padding: 0 34px; display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 10;
+    }
+    .breadcrumb { color: var(--muted); font-size: 13px; }
+    .breadcrumb b { color: var(--text); font-weight: 600; }
+    .top-actions { display: flex; align-items: center; gap: 15px; }
+    .icon-btn { position: relative; border: 0; background: transparent; color: var(--muted); font-size: 19px; padding: 4px; }
+    .dot { width: 6px; height: 6px; background: var(--red); border-radius: 50%; position: absolute; right: 3px; top: 2px; border: 1px solid #fff; }
+    .help { border: 1px solid var(--line); border-radius: 8px; color: var(--muted); padding: 8px 12px; background: #fff; }
+    .page { padding: 32px 34px 50px; max-width: 1540px; margin: auto; }
+    .view { display: none; animation: rise .28s ease; }
+    .view.active { display: block; }
+    @keyframes rise { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
+    .page-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-bottom: 28px; }
+    h1 { margin: 0 0 5px; font-size: 27px; letter-spacing: -.8px; }
+    h2 { margin: 0; font-size: 18px; letter-spacing: -.3px; }
+    h3 { margin: 0; font-size: 14px; }
+    .subtitle { color: var(--muted); margin: 0; }
+    .primary, .secondary {
+      border: 0; border-radius: 9px; padding: 11px 15px; font-weight: 650; transition: .2s;
+    }
+    .primary { color: #fff; background: var(--purple); box-shadow: 0 7px 18px rgba(105,87,245,.21); }
+    .primary:hover { background: var(--purple-dark); transform: translateY(-1px); }
+    .secondary { color: var(--text); background: #fff; border: 1px solid var(--line); }
+    .secondary:hover { border-color: #bdc3d3; }
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }
+    .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow-sm); }
+    .stat { padding: 18px 19px; }
+    .stat-top { display: flex; align-items: center; justify-content: space-between; color: var(--muted); font-size: 12px; }
+    .stat-icon { width: 33px; height: 33px; display: grid; place-items: center; background: var(--purple-soft); border-radius: 9px; font-size: 16px; }
+    .stat b { display: block; font-size: 26px; letter-spacing: -.8px; margin-top: 9px; }
+    .trend { font-size: 11px; color: var(--green); margin-top: 2px; }
+    .dashboard-grid { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(300px, .9fr); gap: 20px; }
+    .card-head { display: flex; justify-content: space-between; align-items: center; padding: 19px 20px; border-bottom: 1px solid var(--line); }
+    .card-head a { color: var(--purple); font-size: 12px; text-decoration: none; }
+    .activity { padding: 6px 20px 15px; }
+    .activity-row { display: flex; align-items: flex-start; gap: 12px; padding: 14px 0; border-bottom: 1px solid #f0f2f6; }
+    .activity-row:last-child { border: 0; }
+    .activity-dot { margin-top: 5px; width: 9px; height: 9px; border-radius: 50%; background: var(--purple); box-shadow: 0 0 0 4px var(--purple-soft); }
+    .activity-copy { flex: 1; }
+    .activity-copy b { display: block; font-weight: 600; font-size: 13px; }
+    .activity-copy span { color: var(--muted); font-size: 12px; }
+    .time { color: var(--subtle); font-size: 11px; white-space: nowrap; }
+    .readiness { padding: 22px; }
+    .readiness-score { display: flex; align-items: center; gap: 17px; margin-bottom: 20px; }
+    .ring { width: 76px; height: 76px; border-radius: 50%; background: conic-gradient(var(--purple) 0 72%, #ecebfa 72% 100%); display: grid; place-items: center; }
+    .ring:after { content: "72%"; display: grid; place-items: center; width: 58px; height: 58px; border-radius: 50%; background: white; font-weight: 750; font-size: 15px; }
+    .readiness-score b { display: block; font-size: 15px; }
+    .readiness-score span { font-size: 12px; color: var(--muted); }
+    .check { display: flex; align-items: center; gap: 9px; padding: 9px 0; color: var(--muted); font-size: 12px; }
+    .check i { width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; font-style: normal; font-size: 11px; background: var(--green-soft); color: var(--green); }
+    .check.pending i { background: var(--orange-soft); color: var(--orange); }
+    .builder-hero {
+      background: linear-gradient(115deg, #171d3b, #28226a 60%, #4c41a8);
+      color: white; border: 0; padding: 25px; position: relative; overflow: hidden; margin-bottom: 20px;
+    }
+    .builder-hero:after { content: ""; position: absolute; width: 260px; height: 260px; border: 1px solid rgba(255,255,255,.12); border-radius: 50%; right: -65px; top: -100px; box-shadow: 0 0 0 30px rgba(255,255,255,.03), 0 0 0 60px rgba(255,255,255,.025); }
+    .builder-hero h2 { font-size: 21px; margin-bottom: 7px; position: relative; z-index: 1; }
+    .builder-hero p { color: #c5c8e4; max-width: 570px; margin: 0 0 18px; position: relative; z-index: 1; }
+    .hero-actions { display: flex; gap: 9px; position: relative; z-index: 1; }
+    .hero-actions .primary { background: #fff; color: #4438b1; }
+    .hero-actions .secondary { background: rgba(255,255,255,.1); color: #fff; border-color: rgba(255,255,255,.22); }
+    .workflow { display: grid; grid-template-columns: repeat(6, 1fr); gap: 9px; margin-top: 21px; }
+    .step { border-top: 2px solid rgba(255,255,255,.2); padding-top: 9px; color: #aeb4dc; font-size: 11px; }
+    .step.active { border-color: #69dcdf; color: #fff; }
+    .step strong { display: block; font-size: 12px; margin-bottom: 2px; }
+    .projects { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+    .project { padding: 18px; }
+    .project-banner { height: 102px; margin: -18px -18px 16px; background: linear-gradient(135deg, #dfe7ff, #f2efff); position: relative; overflow: hidden; }
+    .project-banner:before { content: ""; position: absolute; background: white; width: 76%; height: 70%; left: 12%; top: 16%; border-radius: 4px 4px 0 0; box-shadow: 0 5px 15px #aeb7d733; }
+    .project-banner:after { content: ""; position: absolute; width: 40%; height: 8px; left: 20%; top: 43%; background: var(--purple); border-radius: 5px; box-shadow: 0 13px #e2e6f4, 0 26px #e2e6f4; }
+    .project-top { display: flex; justify-content: space-between; align-items: flex-start; }
+    .project p { color: var(--muted); font-size: 12px; margin: 5px 0 16px; }
+    .status { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; padding: 4px 8px; border-radius: 20px; background: var(--green-soft); color: var(--green); }
+    .status:before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+    .status.draft { background: #f1f3f8; color: var(--muted); }
+    .project-foot { display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-size: 11px; }
+    .project-foot button { border: 0; background: none; color: var(--purple); font-weight: 600; }
+    .builder-layout { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(290px, .65fr); gap: 20px; }
+    .form-card { padding: 22px; }
+    .form-card h2 { margin-bottom: 5px; }
+    .field { margin-top: 18px; }
+    label { display: block; font-size: 12px; font-weight: 650; margin-bottom: 7px; }
+    input, textarea, select { width: 100%; border: 1px solid var(--line); background: #fff; border-radius: 9px; padding: 11px 12px; color: var(--text); outline: none; }
+    textarea { min-height: 100px; resize: vertical; }
+    input:focus, textarea:focus, select:focus { border-color: var(--purple); box-shadow: 0 0 0 3px var(--purple-soft); }
+    .hint { color: var(--muted); font-size: 11px; margin-top: 6px; }
+    .choice-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .choice { border: 1px solid var(--line); border-radius: 9px; padding: 11px; background: white; text-align: left; }
+    .choice.selected { border-color: var(--purple); background: var(--purple-soft); color: var(--purple-dark); }
+    .choice b { display: block; font-size: 12px; }
+    .choice span { color: var(--muted); font-size: 10px; }
+    .form-actions { margin-top: 22px; display: flex; gap: 9px; align-items: center; }
+    .notice { background: #f7f8fc; border: 1px solid var(--line); border-radius: 10px; padding: 13px; color: var(--muted); font-size: 11px; }
+    .architecture { padding: 20px; }
+    .architecture p { color: var(--muted); font-size: 12px; margin-top: 5px; }
+    .arch-item { display: flex; gap: 10px; align-items: center; padding: 13px 0; border-bottom: 1px solid #f0f2f6; }
+    .arch-item:last-child { border-bottom: 0; }
+    .arch-icon { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 8px; background: var(--purple-soft); }
+    .arch-item b { display: block; font-size: 12px; }
+    .arch-item span { display: block; font-size: 10px; color: var(--muted); }
+    .tag { margin-left: auto; font-size: 10px; color: var(--muted); background: #f0f2f7; padding: 3px 7px; border-radius: 4px; }
+    .chat-layout { display: grid; grid-template-columns: minmax(0, 1fr) 330px; gap: 20px; }
+    .chat-preview { min-height: 540px; display: flex; flex-direction: column; background: #fff; overflow: hidden; }
+    .chat-head { background: linear-gradient(120deg, #171d3b, #403898); color: white; padding: 18px; display: flex; align-items: center; gap: 11px; }
+    .bot { width: 36px; height: 36px; display: grid; place-items: center; background: #75e3df; color: #152044; border-radius: 12px; font-weight: 800; }
+    .chat-head b { display: block; font-size: 13px; }
+    .chat-head span { color: #c4c9ec; font-size: 11px; }
+    .chat-body { flex: 1; padding: 22px; background: #f7f8fc; }
+    .bubble { max-width: 75%; padding: 11px 13px; font-size: 12px; margin-bottom: 12px; border-radius: 13px 13px 13px 3px; background: #fff; border: 1px solid var(--line); }
+    .bubble.user { margin-left: auto; background: var(--purple); color: white; border: 0; border-radius: 13px 13px 3px; }
+    .chat-input { display: flex; gap: 8px; padding: 14px; border-top: 1px solid var(--line); }
+    .chat-input input { padding: 9px; }
+    .chat-input button { border: 0; border-radius: 8px; background: var(--purple); color: white; padding: 0 14px; }
+    .side-stack { display: grid; gap: 15px; align-content: start; }
+    .side-stack .card { padding: 18px; }
+    .channel { display: flex; align-items: center; gap: 10px; padding: 11px 0; border-bottom: 1px solid #f0f2f6; }
+    .channel:last-child { border: 0; }
+    .channel-icon { width: 30px; height: 30px; background: #f0f2f7; border-radius: 8px; display: grid; place-items: center; }
+    .channel div:nth-child(2) { flex: 1; }
+    .channel b { font-size: 12px; display: block; }
+    .channel span { font-size: 10px; color: var(--muted); }
+    .switch { width: 30px; height: 17px; border-radius: 20px; background: #dfe3eb; padding: 2px; }
+    .switch:after { content: ""; width: 13px; height: 13px; display: block; border-radius: 50%; background: white; box-shadow: 0 1px 2px #999; }
+    .switch.on { background: var(--green); }
+    .switch.on:after { margin-left: 13px; }
+    .empty { color: var(--muted); text-align: center; padding: 30px 10px; }
+    .modal-backdrop { display: none; position: fixed; inset: 0; z-index: 40; background: rgba(12,17,38,.54); align-items: center; justify-content: center; padding: 20px; }
+    .modal-backdrop.open { display: flex; }
+    .modal { max-width: 470px; width: 100%; background: white; border-radius: 16px; box-shadow: var(--shadow); padding: 23px; animation: rise .25s ease; }
+    .modal-head { display: flex; justify-content: space-between; margin-bottom: 4px; }
+    .close { border: 0; background: none; font-size: 20px; color: var(--muted); }
+    .modal .primary { margin-top: 18px; width: 100%; }
+    .toast { position: fixed; right: 22px; bottom: 22px; background: var(--navy); color: white; border-radius: 10px; padding: 12px 16px; box-shadow: var(--shadow); transform: translateY(80px); opacity: 0; transition: .25s; z-index: 60; font-size: 12px; }
+    .toast.show { transform: none; opacity: 1; }
+    .mobile-menu { display: none; border: 0; background: none; font-size: 22px; }
+    @media (max-width: 1050px) {
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .projects { grid-template-columns: repeat(2, 1fr); }
+      .dashboard-grid, .builder-layout { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 760px) {
+      .sidebar { transform: translateX(-100%); transition: .25s; box-shadow: var(--shadow); }
+      .sidebar.open { transform: none; }
+      .main { width: 100%; margin-left: 0; }
+      .topbar { height: 62px; padding: 0 17px; }
+      .mobile-menu { display: block; margin-right: 10px; }
+      .topbar-left { display: flex; align-items: center; }
+      .help { display: none; }
+      .page { padding: 23px 16px 40px; }
+      .page-head { display: block; }
+      .page-head .primary { margin-top: 17px; }
+      h1 { font-size: 24px; }
+      .stats { gap: 10px; }
+      .stat { padding: 14px; }
+      .stat b { font-size: 22px; }
+      .projects { grid-template-columns: 1fr; }
+      .workflow { grid-template-columns: repeat(3, 1fr); row-gap: 15px; }
+      .chat-layout { grid-template-columns: 1fr; }
+      .choice-grid { grid-template-columns: 1fr; }
+      .top-actions { gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-mark">✦</div>
+        <div><strong>My Personal AI</strong><span>Business Agent</span></div>
+      </div>
+      <div class="nav-label">Command center</div>
+      <nav class="nav">
+        <button class="active" data-view="overview"><span class="icon">⌂</span>Overview</button>
+        <button data-view="builder"><span class="icon">✦</span>AI Website Builder<span class="nav-badge">New</span></button>
+        <button data-view="support"><span class="icon">◌</span>AI Support Chat</button>
+        <button data-view="leads"><span class="icon">♧</span>Leads</button>
+      </nav>
+      <div class="nav-label">Workspace</div>
+      <nav class="nav">
+        <button data-view="integrations"><span class="icon">◎</span>Integrations</button>
+        <button data-view="settings"><span class="icon">⚙</span>Settings</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="upgrade"><small>Workspace plan</small><b>Build with confidence</b><button data-view="settings">Review workspace</button></div>
+        <div class="profile"><div class="avatar">AM</div><div><strong>Alex Morgan</strong><small>Owner workspace</small></div><span>⋮</span></div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar-left"><button class="mobile-menu" id="menuBtn">☰</button><div class="breadcrumb">Workspace / <b id="crumb">Overview</b></div></div>
+        <div class="top-actions"><button class="help">? Help center</button><button class="icon-btn">♧<i class="dot"></i></button></div>
+      </header>
+
+      <div class="page">
+        <section class="view active" id="overview">
+          <div class="page-head"><div><h1>Good morning, Alex</h1><p class="subtitle">Your business command center is ready for its next decision.</p></div><button class="primary" id="newProject">＋ New website project</button></div>
+          <div class="stats">
+            <div class="card stat"><div class="stat-top"><span>Active projects</span><span class="stat-icon">✦</span></div><b>03</b><div class="trend">↑ 1 this month</div></div>
+            <div class="card stat"><div class="stat-top"><span>Open leads</span><span class="stat-icon">♧</span></div><b>24</b><div class="trend">↑ 18% vs last month</div></div>
+            <div class="card stat"><div class="stat-top"><span>Conversations</span><span class="stat-icon">◌</span></div><b>186</b><div class="trend">↑ 31% this month</div></div>
+            <div class="card stat"><div class="stat-top"><span>Workspace health</span><span class="stat-icon">✓</span></div><b>72%</b><div class="trend">2 actions recommended</div></div>
+          </div>
+          <div class="dashboard-grid">
+            <div class="card"><div class="card-head"><h2>Recent activity</h2><a href="#">View audit log</a></div><div class="activity">
+              <div class="activity-row"><div class="activity-dot"></div><div class="activity-copy"><b>Website brief saved as a draft</b><span>“Northstar Studio” · You can review the plan before any build action.</span></div><span class="time">12 min ago</span></div>
+              <div class="activity-row"><div class="activity-dot" style="background:var(--cyan)"></div><div class="activity-copy"><b>Support inbox needs your attention</b><span>3 conversations are awaiting an owner response.</span></div><span class="time">1 hr ago</span></div>
+              <div class="activity-row"><div class="activity-dot" style="background:var(--green)"></div><div class="activity-copy"><b>Lead capture form configuration updated</b><span>Website: Oak &amp; Finch Consulting.</span></div><span class="time">Yesterday</span></div>
+              <div class="activity-row"><div class="activity-dot" style="background:var(--orange)"></div><div class="activity-copy"><b>Domain connection is incomplete</b><span>Connect a verified domain before publishing.</span></div><span class="time">Yesterday</span></div>
+            </div></div>
+            <div class="card"><div class="card-head"><h2>Workspace readiness</h2><a href="#" data-view="settings">Details</a></div><div class="readiness"><div class="readiness-score"><div class="ring"></div><div><b>Good foundation</b><span>Complete the remaining setup steps.</span></div></div><div class="check"><i>✓</i>Business profile defined</div><div class="check"><i>✓</i>Brand preferences added</div><div class="check pending"><i>!</i>Connect a publishing domain</div><div class="check pending"><i>!</i>Review support escalation rules</div></div></div>
+          </div>
+          <div class="card" style="margin-top:20px"><div class="card-head"><h2>Your websites</h2><a href="#" data-view="builder">Manage projects</a></div><div class="projects" style="padding:0 20px 20px">
+            <div class="card project"><div class="project-banner"></div><div class="project-top"><div><h3>Northstar Studio</h3><p>Creative services website</p></div><span class="status draft">Draft</span></div><div class="project-foot"><span>Updated 12 min ago</span><button data-view="builder">Open brief →</button></div></div>
+            <div class="card project"><div class="project-banner" style="background:linear-gradient(135deg,#d8f4ef,#e8edff)"></div><div class="project-top"><div><h3>Oak &amp; Finch</h3><p>Consulting and lead generation</p></div><span class="status">Active</span></div><div class="project-foot"><span>Updated yesterday</span><button data-view="builder">Manage →</button></div></div>
+            <div class="card project"><div class="project-banner" style="background:linear-gradient(135deg,#fff0d7,#ffe8ed)"></div><div class="project-top"><div><h3>Hearth &amp; Home</h3><p>Local services landing page</p></div><span class="status draft">Planning</span></div><div class="project-foot"><span>Updated 3 days ago</span><button data-view="builder">Continue →</button></div></div>
+          </div></div>
+        </section>
+
+        <section class="view" id="builder">
+          <div class="page-head"><div><h1>AI Website Builder</h1><p class="subtitle">Turn a clear business brief into a reviewable, maintainable website plan.</p></div><button class="secondary" id="openProject">＋ Start from brief</button></div>
+          <div class="builder-hero card"><h2>From research to a website you can own</h2><p>Define the business, audience, goals, and constraints. The agent prepares research questions, site architecture, content direction, and implementation tasks for your review.</p><div class="hero-actions"><button class="primary" id="preparePlan">Prepare a plan</button><button class="secondary" data-view="integrations">Configure integrations</button></div><div class="workflow"><div class="step active"><strong>01 Research</strong>Brief &amp; context</div><div class="step active"><strong>02 Plan</strong>Goals &amp; sitemap</div><div class="step"><strong>03 Design</strong>Visual direction</div><div class="step"><strong>04 Build</strong>Components</div><div class="step"><strong>05 Optimize</strong>Quality review</div><div class="step"><strong>06 Maintain</strong>Ongoing changes</div></div></div>
+          <div class="builder-layout"><div class="card form-card"><h2>Project brief</h2><p class="subtitle">A strong brief keeps the agent aligned with your actual business.</p><div class="field"><label for="business">Business or project name</label><input id="business" value="Northstar Studio" /></div><div class="field"><label for="goals">What should this website accomplish?</label><textarea id="goals">Explain our services clearly, build trust with prospective clients, and generate qualified consultation requests.</textarea><div class="hint">Include measurable goals, important pages, and any non-negotiable requirements.</div></div><div class="field"><label>Choose an initial direction</label><div class="choice-grid"><button class="choice selected"><b>Conversion-focused</b><span>Clear paths to action</span></button><button class="choice"><b>Editorial</b><span>Story-led and expressive</span></button><button class="choice"><b>Product-led</b><span>Feature and demo driven</span></button></div></div><div class="field"><label for="constraints">Constraints and preferences</label><input id="constraints" placeholder="e.g. existing brand, accessibility, CMS, launch date" /></div><div class="form-actions"><button class="primary" id="saveBrief">Save brief</button><span class="hint">Saving only stores this local workspace draft.</span></div></div>
+          <div class="card architecture"><h2>Production architecture</h2><p>Designed to extend cleanly as your business grows.</p><div class="arch-item"><div class="arch-icon">◈</div><div><b>Next.js + TypeScript</b><span>Modular app and API boundaries</span></div><span class="tag">Core</span></div><div class="arch-item"><div class="arch-icon">▦</div><div><b>Tailwind CSS</b><span>Consistent responsive design system</span></div><span class="tag">UI</span></div><div class="arch-item"><div class="arch-icon">◇</div><div><b>Prisma + PostgreSQL</b><span>Typed persistence and migrations</span></div><span class="tag">Data</span></div><div class="arch-item"><div class="arch-icon">⌁</div><div><b>Integration-ready</b><span>WhatsApp, email, voice, payments, calendar</span></div><span class="tag">Later</span></div><div class="notice" style="margin-top:16px">No external research, publishing, or third-party connection is performed from this screen. Review and authorize each action when the production backend is connected.</div></div></div>
+        </section>
+
+        <section class="view" id="support">
+          <div class="page-head"><div><h1>AI Support Chat</h1><p class="subtitle">A customer-facing support experience with clear human handoff.</p></div><button class="secondary" data-view="integrations">Connect a channel</button></div>
+          <div class="chat-layout"><div class="card chat-preview"><div class="chat-head"><div class="bot">✦</div><div><b>Northstar Assistant</b><span>Preview only · not connected to a live channel</span></div></div><div class="chat-body" id="chatBody"><div class="bubble">Hi! I can help visitors understand Northstar Studio’s services and collect a consultation request.</div><div class="bubble user">I’m interested in a new website. What happens next?</div><div class="bubble">I can collect a few details and prepare a request for the team. A team member should review and respond before any commitment is made.</div></div><div class="chat-input"><input id="chatInput" placeholder="Write a preview message…" /><button id="sendChat">Send</button></div></div><div class="side-stack"><div class="card"><h3>Channel status</h3><div class="channel"><div class="channel-icon">▣</div><div><b>Website widget</b><span>Preview available</span></div><span class="tag">Draft</span></div><div class="channel"><div class="channel-icon">◌</div><div><b>WhatsApp</b><span>Not connected</span></div><span class="tag">Later</span></div><div class="channel"><div class="channel-icon">✉</div><div><b>Email</b><span>Not connected</span></div><span class="tag">Later</span></div></div><div class="card"><h3>Human handoff rules</h3><p class="hint">Set the conditions that should route a conversation to your team.</p><div class="check"><i>✓</i>Pricing or proposal request</div><div class="check"><i>✓</i>Low confidence response</div><div class="check"><i>✓</i>Visitor asks for a person</div><button class="secondary" style="width:100%;margin-top:12px" data-view="settings">Review rules</button></div></div></div>
+        </section>
+
+        <section class="view" id="leads">
+          <div class="page-head"><div><h1>Leads</h1><p class="subtitle">Review captured interest before it enters your sales workflow.</p></div><button class="secondary" data-view="integrations">Set up delivery</button></div>
+          <div class="card"><div class="card-head"><h2>Recent leads</h2><span class="tag">Local workspace data</span></div><div style="overflow:auto"><table style="width:100%;border-collapse:collapse;min-width:620px"><thead><tr style="text-align:left;color:var(--muted);font-size:11px"><th style="padding:14px 20px">CONTACT</th><th>REQUEST</th><th>STATUS</th><th>RECEIVED</th></tr></thead><tbody><tr><td style="padding:15px 20px;border-top:1px solid var(--line)"><b>Jamie Chen</b><br><span class="hint">jamie@example.com</span></td><td style="border-top:1px solid var(--line)">Brand and website refresh</td><td style="border-top:1px solid var(--line)"><span class="status">New</span></td><td style="border-top:1px solid var(--line);color:var(--muted)">Today, 9:42 AM</td></tr><tr><td style="padding:15px 20px;border-top:1px solid var(--line)"><b>Priya Shah</b><br><span class="hint">priya@example.com</span></td><td style="border-top:1px solid var(--line)">Consultation request</td><td style="border-top:1px solid var(--line)"><span class="status draft">Needs review</span></td><td style="border-top:1px solid var(--line);color:var(--muted)">Yesterday</td></tr><tr><td style="padding:15px 20px;border-top:1px solid var(--line)"><b>Marcus Bell</b><br><span class="hint">marcus@example.com</span></td><td style="border-top:1px solid var(--line)">SEO and conversion audit</td><td style="border-top:1px solid var(--line)"><span class="status">New</span></td><td style="border-top:1px solid var(--line);color:var(--muted)">Yesterday</td></tr></tbody></table></div></div>
+          <div class="notice" style="margin-top:16px">Lead delivery integrations are not connected. Nothing will be sent to a CRM, inbox, or external system until you configure and authorize a destination.</div>
+        </section>
+
+        <section class="view" id="integrations"><div class="page-head"><div><h1>Integrations</h1><p class="subtitle">Connect the systems your agent is allowed to use. No connections are active yet.</p></div></div><div class="projects" style="grid-template-columns:repeat(3,1fr)"><div class="card form-card"><h3>Messaging</h3><p class="subtitle">WhatsApp Business and future channel routing.</p><button class="secondary" style="margin-top:20px;width:100%" data-connect="WhatsApp Business">Not connected</button></div><div class="card form-card"><h3>Email delivery</h3><p class="subtitle">Send approved lead notifications and replies.</p><button class="secondary" style="margin-top:20px;width:100%" data-connect="Email provider">Not connected</button></div><div class="card form-card"><h3>Calendar</h3><p class="subtitle">Offer availability only after authorization.</p><button class="secondary" style="margin-top:20px;width:100%" data-connect="Calendar">Not connected</button></div><div class="card form-card"><h3>Payments</h3><p class="subtitle">Prepare payment handoffs without storing secrets.</p><button class="secondary" style="margin-top:20px;width:100%" data-connect="Payments">Not connected</button></div><div class="card form-card"><h3>Voice</h3><p class="subtitle">Voice support is planned for a later release.</p><button class="secondary" style="margin-top:20px;width:100%" disabled style="opacity:.6">Coming later</button></div></div></section>
+
+        <section class="view" id="settings"><div class="page-head"><div><h1>Settings</h1><p class="subtitle">Control workspace behavior, permissions, and review gates.</p></div><button class="primary" id="saveSettings">Save changes</button></div><div class="builder-layout"><div class="card form-card"><h2>Business profile</h2><div class="field"><label>Workspace name</label><input value="Alex Morgan’s Workspace"></div><div class="field"><label>Default response tone</label><select><option>Clear, warm, and professional</option><option>Concise and direct</option><option>Friendly and conversational</option></select></div><div class="field"><label>Agent operating mode</label><div class="check"><i>✓</i>Require approval before publishing</div><div class="check"><i>✓</i>Require approval before sending external messages</div><div class="check"><i>✓</i>Escalate uncertain customer requests</div></div></div><div class="card form-card"><h2>Security and data</h2><p class="subtitle">Production safeguards for a multi-tenant workspace.</p><div class="arch-item"><div class="arch-icon">⌁</div><div><b>Role-based access</b><span>Owner, admin, and reviewer permissions</span></div></div><div class="arch-item"><div class="arch-icon">◉</div><div><b>Audit trail</b><span>Record plans, approvals, and agent actions</span></div></div><div class="arch-item"><div class="arch-icon">▣</div><div><b>Data retention</b><span>Configure customer conversation retention</span></div></div></div></div></section>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="modal"><div class="modal"><div class="modal-head"><h2>Start a website project</h2><button class="close" id="closeModal">×</button></div><p class="subtitle">Create a draft brief. Nothing will be researched, published, or connected until you explicitly authorize it.</p><div class="field"><label>Project name</label><input id="newName" placeholder="e.g. Acme website redesign" /></div><div class="field"><label>Starting point</label><select><option>New website</option><option>Redesign an existing website</option><option>Optimize an existing website</option><option>Maintenance plan</option></select></div><button class="primary" id="createDraft">Create draft brief</button></div></div>
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const views = document.querySelectorAll('.view');
+    const crumb = document.getElementById('crumb');
+    const toast = document.getElementById('toast');
+    const sidebar = document.getElementById('sidebar');
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(window.toastTimer);
+      window.toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+    function openView(name) {
+      views.forEach(v => v.classList.toggle('active', v.id === name));
+      document.querySelectorAll('.nav button').forEach(b => b.classList.toggle('active', b.dataset.view === name));
+      const active = document.querySelector('.nav button.active');
+      crumb.textContent = active ? active.textContent.replace('New','').trim() : name;
+      sidebar.classList.remove('open');
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+    document.querySelectorAll('[data-view]').forEach(el => el.addEventListener('click', e => {
+      const view = el.dataset.view;
+      if (view) { e.preventDefault(); openView(view); }
+    }));
+    document.getElementById('menuBtn').addEventListener('click', () => sidebar.classList.toggle('open'));
+    const modal = document.getElementById('modal');
+    document.getElementById('newProject').onclick = () => modal.classList.add('open');
+    document.getElementById('openProject').onclick = () => modal.classList.add('open');
+    document.getElementById('closeModal').onclick = () => modal.classList.remove('open');
+    modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
+
+    document.getElementById('createDraft').onclick = () => {
+      const name = document.getElementById('newName').value.trim();
+      if (!name) { showToast('Add a project name to create a draft.'); return; }
+      document.getElementById('business').value = name;
+      modal.classList.remove('open');
+      openView('builder');
+      showToast('Draft brief created in this workspace.');
+    };
+    document.getElementById('saveBrief').onclick = () => showToast('Brief saved as a local workspace draft.');
+    document.getElementById('saveSettings').onclick = () => showToast('Settings saved locally. No external systems were changed.');
+    document.getElementById('preparePlan').onclick = () => showToast('Plan preparation requires a connected production AI backend.');
+    document.querySelectorAll('.choice').forEach(choice => choice.onclick = () => {
+      document.querySelectorAll('.choice').forEach(c => c.classList.remove('selected'));
+      choice.classList.add('selected');
+    });
+    document.querySelectorAll('[data-connect]').forEach(btn => btn.onclick = () => showToast(btn.dataset.connect + ' requires OAuth configuration in the production backend.'));
+    document.getElementById('sendChat').onclick = sendChat;
+    document.getElementById('chatInput').addEventListener('keydown', e => { if (e.key === 'Enter') sendChat(); });
+    function sendChat() {
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (!text) return;
+      const body = document.getElementById('chatBody');
+      const user = document.createElement('div');
+      user.className = 'bubble user';
+      user.textContent = text;
+      body.appendChild(user);
+      input.value = '';
+      const note = document.createElement('div');
+      note.className = 'bubble';
+      note.textContent = 'This is a preview environment. Connect a production AI provider and configure approved knowledge sources to generate a live response.';
+      body.appendChild(note);
+      body.scrollTop = body.scrollHeight;
+    }
+  </script>
+</body>
+</html>

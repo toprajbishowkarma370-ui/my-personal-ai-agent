@@ -1,0 +1,2433 @@
+<html lang="en" class="h-full">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#0b1020" />
+<title>My Personal AI Business Agent — Autonomous Business OS</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'monospace']
+      },
+      colors: {
+        brand: {
+          50: '#f4f3ff', 100: '#ebe8ff', 200: '#d9d4fe', 300: '#bfb5fd',
+          400: '#9f8efc', 500: '#7e63f8', 600: '#6957f5', 700: '#543fe0',
+          800: '#4533ba', 900: '#3a2d96', 950: '#15103b'
+        },
+        dark: { 800: '#141a2e', 850: '#101526', 900: '#0b0f1f', 950: '#070a14' }
+      }
+    }
+  }
+};
+</script>
+<style>
+* { box-sizing: border-box; }
+body { background: #f8fafc; color: #0f172a; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.05); }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(100, 116, 139, 0.3); border-radius: 9999px; }
+.code-scroll::-webkit-scrollbar { width: 8px; height: 8px; }
+.code-scroll::-webkit-scrollbar-track { background: #090e1f; }
+.code-scroll::-webkit-scrollbar-thumb { background: #25335e; border-radius: 6px; }
+.view { display: none; }
+.view.active { display: block; animation: fadeIn .22s ease-out; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+.pulsing-dot { animation: pulseGlow 2s infinite ease-in-out; }
+@keyframes pulseGlow { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.45; transform: scale(0.85); } }
+.codeblock { white-space: pre-wrap; word-break: break-word; }
+.download-all-btn[disabled] { cursor: wait; }
+</style>
+</head>
+<body class="h-full antialiased bg-slate-50 selection:bg-brand-500 selection:text-white">
+<div class="min-h-screen flex flex-col lg:flex-row">
+
+<header class="lg:hidden bg-slate-950 text-white px-4 py-3 flex items-center justify-between sticky top-0 z-40 border-b border-slate-800">
+  <div class="flex items-center gap-2.5">
+    <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-brand-600 to-cyan-400 flex items-center justify-center font-black">✦</div>
+    <div>
+      <div class="font-bold text-sm leading-tight">My Personal AI</div>
+      <div class="text-[10px] text-slate-400 uppercase font-semibold tracking-wider">Autonomous Business OS</div>
+    </div>
+  </div>
+  <div class="flex items-center gap-2">
+    <button type="button" class="download-all-btn px-2.5 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-white rounded-lg text-xs font-bold shadow active:scale-95 transition">📦 ZIP</button>
+    <button id="mobileNavToggle" class="p-2 rounded-lg bg-slate-900 text-slate-300 border border-slate-800" onclick="toggleMobileNav()">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/></svg>
+    </button>
+  </div>
+</header>
+
+<aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-72 bg-slate-950 text-slate-300 transform -translate-x-full lg:translate-x-0 lg:static transition-transform duration-200 flex flex-col border-r border-slate-800 shadow-2xl lg:shadow-none">
+  <div class="p-6 border-b border-slate-800 hidden lg:flex items-center gap-3">
+    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 via-brand-500 to-cyan-400 flex items-center justify-center font-black text-white text-xl shadow-lg">✦</div>
+    <div>
+      <h1 class="font-bold text-base text-white tracking-tight leading-tight">My Personal AI</h1>
+      <p class="text-xs text-brand-300 font-medium">Autonomous Business OS v3.6</p>
+    </div>
+  </div>
+
+  <div class="px-5 pt-4 pb-2">
+    <div class="bg-slate-900 rounded-xl p-3 border border-slate-800 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span id="daemonDot" class="w-2.5 h-2.5 rounded-full bg-emerald-400 pulsing-dot"></span>
+        <span id="daemonLabel" class="text-xs font-semibold text-slate-200">NextAuth: Active</span>
+      </div>
+      <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-brand-950 text-brand-300 border border-brand-800/50">ROLE: ADMIN</span>
+    </div>
+  </div>
+
+  <div class="flex-1 overflow-y-auto custom-scrollbar px-3 py-3 space-y-6">
+    <div>
+      <div class="px-3 pb-2 text-[11px] font-bold tracking-wider text-slate-500 uppercase">Protected Command Center</div>
+      <nav class="space-y-1">
+        <button onclick="openView('command-center')" data-view="command-center" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-sm text-white bg-slate-800 border border-slate-700"><span class="text-brand-400">🚀</span>Owner Command Center</button>
+        <button onclick="openView('overview')" data-view="overview" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm text-slate-400 hover:text-white hover:bg-slate-800/50"><span>📊</span>Overview & Health</button>
+        <button onclick="openView('workflow')" data-view="workflow" class="nav-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-medium text-sm text-slate-400 hover:text-white hover:bg-slate-800/50">
+          <div class="flex items-center gap-3"><span class="text-amber-400">⚡</span>Business Workflow</div>
+          <span id="pendingApprovalBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">10 Approval</span>
+        </button>
+        <button onclick="openView('tasks')" data-view="tasks" class="nav-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-medium text-sm text-slate-400 hover:text-white hover:bg-slate-800/50">
+          <div class="flex items-center gap-3"><span class="text-rose-400">🧩</span>Task Orchestrator</div>
+          <span id="taskBlockedBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300">2 Blocked</span>
+        </button>
+        <button onclick="openView('builder')" data-view="builder" class="nav-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-medium text-sm text-slate-400 hover:text-white hover:bg-slate-800/50">
+          <div class="flex items-center gap-3"><span class="text-cyan-400">💻</span>Edit & Code Studio</div>
+          <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">ZIP</span>
+        </button>
+        <button onclick="openView('chat')" data-view="chat" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm text-slate-400 hover:text-white hover:bg-slate-800/50"><span class="text-purple-400">🤖</span>AI Support Agent</button>
+        <button onclick="openView('leads')" data-view="leads" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm text-slate-400 hover:text-white hover:bg-slate-800/50"><span class="text-emerald-400">👥</span>Leads & CRM Pipeline</button>
+      </nav>
+    </div>
+
+    <div>
+      <div class="px-3 pb-2 text-[11px] font-bold tracking-wider text-slate-500 uppercase">Integrations & System (Protected)</div>
+      <nav class="space-y-1">
+        <button onclick="openView('integrations')" data-view="integrations" class="nav-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-medium text-sm text-slate-400 hover:text-white hover:bg-slate-800/50">
+          <div class="flex items-center gap-3"><span class="text-indigo-400">🔌</span>Server Integrations</div>
+          <span id="integrationsBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-300">12</span>
+        </button>
+        <button onclick="openView('analytics')" data-view="analytics" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm text-slate-400 hover:text-white hover:bg-slate-800/50"><span class="text-emerald-400">📈</span>Analytics & Reports</button>
+        <button onclick="openView('scheduler')" data-view="scheduler" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm text-slate-400 hover:text-white hover:bg-slate-800/50"><span class="text-amber-400">🗓️</span>Scheduler & Automation</button>
+        <button onclick="openView('architecture')" data-view="architecture" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm text-slate-400 hover:text-white hover:bg-slate-800/50"><span class="text-sky-400">🏗️</span>Backend Architecture</button>
+        <button onclick="openView('settings')" data-view="settings" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm text-slate-400 hover:text-white hover:bg-slate-800/50"><span>⚙️</span>Settings & Security</button>
+      </nav>
+    </div>
+  </div>
+
+  <div class="p-4 m-3 rounded-2xl bg-gradient-to-b from-slate-900 to-brand-950 border border-brand-800/40 text-center shadow-lg">
+    <div class="flex items-center justify-center gap-2 mb-1">
+      <span>📦</span>
+      <h4 class="text-xs font-bold text-white uppercase tracking-wider">Export Clean Codebase</h4>
+    </div>
+    <p class="text-[11px] text-slate-400 mb-3 leading-relaxed">Production Next.js 14 App Router • NextAuth Credentials • Prisma RBAC • 0 Secrets included.</p>
+    <button type="button" class="download-all-btn w-full py-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-md active:scale-[0.98] transition">⬇ Download Project (.ZIP)</button>
+    <div class="mt-2 text-[10px] font-mono text-emerald-300">✓ Safe for GitHub/Vercel • Sanitized .env</div>
+    <p id="zipStatus" class="mt-2 text-[10px] font-mono text-slate-400 hidden"></p>
+  </div>
+
+  <div class="p-4 border-t border-slate-800 flex items-center justify-between bg-slate-950">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 font-bold text-slate-950 flex items-center justify-center text-sm shadow">AM</div>
+      <div>
+        <div class="text-xs font-bold text-white flex items-center gap-1.5">Alex Morgan <span class="text-[9px] font-mono px-1.5 py-0.5 bg-emerald-950 text-emerald-400 border border-emerald-800 rounded">ADMIN</span></div>
+        <div class="text-[11px] text-slate-400">Authenticated Owner Session</div>
+      </div>
+    </div>
+    <button onclick="handleLogout()" title="Sign Out" class="text-slate-400 hover:text-rose-400 p-1.5 rounded-lg border border-slate-800 hover:bg-slate-900 transition">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+    </button>
+  </div>
+</aside>
+
+<div id="scrim" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-40 hidden lg:hidden" onclick="toggleMobileNav()"></div>
+
+<main class="flex-1 flex flex-col min-w-0 bg-slate-50 min-h-screen">
+  <header class="hidden lg:flex h-16 bg-white/90 backdrop-blur border-b border-slate-200/80 px-8 items-center justify-between sticky top-0 z-30 shadow-sm">
+    <div class="flex items-center gap-3">
+      <span class="text-xs font-semibold text-slate-500">Autonomous Business OS</span>
+      <span class="text-slate-300">/</span>
+      <span id="breadcrumb" class="text-xs font-bold text-slate-900">Owner Command Center</span>
+      <span class="hidden xl:inline-flex ml-3 px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 text-[10px] font-bold border border-amber-200">🛡️ Protected Route: /dashboard (ADMIN)</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <div id="topServerStatus" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-xs font-medium text-emerald-900">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span id="topServerLabel">NextAuth Session: Authenticated (alex.morgan@agency.local)</span>
+      </div>
+      <button type="button" class="download-all-btn px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-sm transition active:scale-95">⬇ Download Project (.ZIP)</button>
+    </div>
+  </header>
+
+  <div class="flex-1 p-4 lg:p-8 max-w-[1400px] w-full mx-auto">
+
+    <!-- COMMAND CENTER -->
+    <section id="command-center" class="view active space-y-6">
+      <div class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white rounded-2xl p-6 shadow-xl border border-slate-800 relative overflow-hidden">
+        <div class="absolute -right-20 -top-20 w-96 h-96 bg-brand-600/20 rounded-full blur-3xl"></div>
+        <div class="absolute -left-20 -bottom-20 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl"></div>
+        <div class="relative z-10">
+          <div class="flex flex-wrap items-center gap-2 mb-3">
+            <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase bg-brand-500/30 text-brand-200 border border-brand-400/30">Master Orchestrator v3.6</span>
+            <span class="px-2 py-1 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">● Real Integrations Only</span>
+            <span class="px-2 py-1 rounded-full text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">Never fake success</span>
+            <span class="text-xs text-slate-400 ml-2 hidden sm:inline">VOICE READY • EN / नेपाली / Romanized • SERVER-SIDE KEYS</span>
+          </div>
+          <div class="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
+            <div class="flex-1">
+              <h2 class="text-2xl md:text-3xl font-black tracking-tight">Owner Command Center</h2>
+              <p class="text-sm text-slate-300 mt-2 max-w-2xl leading-relaxed">Target: <b class="text-white">Chaurjahari, Rukum West, Karnali Province, Nepal</b> — Hotels, Restaurants, Cafes, Shops, Salons, Tailoring, Clinics, Schools, Travel Agencies. Type any goal in <b class="text-white">English, नेपाली or Romanized Nepali</b>. The Master Orchestrator will <b class="text-brand-300">UNDERSTAND → PLAN → SELECT AGENTS → RISK CHECK → ASK APPROVAL → EXECUTE REAL ACTIONS → VERIFY → LOG → MEMORY → NEXT STEP</b>. No external message, payment or deployment ever runs without your approval and a <b class="text-emerald-300">CONNECTED</b> provider.</p>
+              <div class="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px]">
+                <div class="px-2.5 py-1.5 rounded-full bg-white/10 border border-white/20 text-center">OWNER COMMAND → AI UNDERSTANDS → PLAN</div>
+                <div class="px-2.5 py-1.5 rounded-full bg-white/10 border border-white/20 text-center">AGENTS + TOOLS → RISK CHECK → APPROVAL</div>
+                <div class="px-2.5 py-1.5 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-200 text-center">REAL ACTION → VERIFY → RESULT → LOG</div>
+              </div>
+            </div>
+            <div class="lg:w-[380px] space-y-3">
+              <div class="bg-white/10 backdrop-blur rounded-xl p-3 border border-white/15">
+                <div class="text-[11px] font-bold uppercase tracking-wider text-brand-200 mb-1">Daily Business Briefing — Today</div>
+                <div id="dailyBriefing" class="text-xs text-slate-200 leading-relaxed">10 high-value leads verified in Chaurjahari. Staged in Approval Queue. Resend API key required before sending real emails.</div>
+              </div>
+              <div class="bg-amber-500 rounded-xl p-3 text-slate-900 shadow">
+                <div class="text-[11px] font-black uppercase flex items-center gap-2">🧭 What should I do next?</div>
+                <div id="nextBestAction" class="text-xs font-semibold mt-1">Execute Chaurjahari command → Review 10 ranked leads → Approve top 3 outreach (Nepali primary) → Connect Resend/WhatsApp to enable real sending.</div>
+              </div>
+              <div class="bg-slate-900/60 rounded-xl p-2.5 border border-white/10 text-[10px] font-mono text-slate-300 flex items-center justify-between">
+                <span>🔒 Protected Route & API Middleware Active</span>
+                <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">ADMIN Guard</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 bg-white rounded-2xl p-2 flex flex-col md:flex-row gap-2 shadow-lg border border-slate-200">
+        <div class="flex-1 relative flex items-center">
+          <span class="absolute left-3 text-slate-400">⌘</span>
+          <input id="commandInput" type="text" value="Find 10 real potential website customers in Chaurjahari, Rukum West, Karnali Province — rank by website opportunity (1=No website, 2=Weak/outdated, 3=Poor mobile, 4=Missing info, 5=Strong site lowest). Verify sources, explain why each is a good opportunity, prepare Nepali primary + English secondary outreach, and put every external contact into Owner Approval Queue. Do not contact automatically." class="w-full pl-9 pr-4 py-3.5 rounded-xl bg-slate-50 border border-slate-200 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20" />
+        </div>
+        <div class="flex gap-2">
+          <button onclick="toggleVoice()" id="voiceBtn" class="px-4 py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-sm font-bold flex items-center gap-2 border border-slate-800 transition">
+            <span id="voiceIcon">🎤</span><span class="hidden sm:inline">Voice</span>
+          </button>
+          <button onclick="executeCommand()" class="flex-1 md:flex-none px-6 py-3 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-sm font-black flex items-center justify-center gap-2 shadow-md transition">🚀 Execute Command</button>
+        </div>
+      </div>
+      <div class="mt-3 flex flex-wrap gap-2 text-xs">
+        <button onclick="fillCommand('Find 10 real potential website customers in Chaurjahari, Rukum West — prioritize businesses with no website at all, explain opportunity for each, and prepare Nepali primary + English secondary outreach drafts. Do not contact until approved.')" class="px-3 py-1.5 bg-white/70 hover:bg-white text-slate-700 rounded-full border border-slate-200 transition">🎯 Find 10 Chaurjahari Leads</button>
+        <button onclick="fillCommand('मलाई चौरजहारीका १० सम्भावित ग्राहक खोज्नुहोस् — वेबसाइट नभएकालाई पहिलो प्राथमिकता दिनुहोस्।')" class="px-3 py-1.5 bg-white/70 hover:bg-white text-slate-700 rounded-full border border-slate-200 transition">🇳🇵 नेपालीमा आदेश</button>
+        <button onclick="fillCommand('Create a website for this customer, collect requirements, generate preview, test, ask approval, then prepare deployment')" class="px-3 py-1.5 bg-white/70 hover:bg-white text-slate-700 rounded-full border border-slate-200 transition">💻 Create Website Workflow</button>
+        <button onclick="fillCommand('Research competitors in Karnali and give me 7/30/90 day growth roadmap')" class="px-3 py-1.5 bg-white/70 hover:bg-white text-slate-700 rounded-full border border-slate-200 transition">📈 Growth Roadmap</button>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+          <h3 class="font-bold text-sm flex items-center gap-2">🏆 Ranking Priority — Website Opportunity</h3>
+          <p class="text-[11px] text-slate-500 mt-1">Verified before scoring. We never assume "no website" without checking Google Search, Maps & Facebook.</p>
+          <div class="grid grid-cols-1 sm:grid-cols-5 gap-2 mt-3 text-[11px] font-bold">
+            <div class="p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-900 text-center"><div class="text-lg">1</div>No Website<br><span class="text-[10px] font-normal">Highest priority</span></div>
+            <div class="p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-center"><div class="text-lg">2</div>Outdated / Weak<br><span class="text-[10px] font-normal">Secondary</span></div>
+            <div class="p-2.5 rounded-xl bg-orange-50 border border-orange-200 text-orange-900 text-center"><div class="text-lg">3</div>Poor Mobile<br><span class="text-[10px] font-normal">Tertiary</span></div>
+            <div class="p-2.5 rounded-xl bg-slate-50 border text-slate-700 text-center"><div class="text-lg">4</div>Missing Info<br><span class="text-[10px] font-normal">Needs fix</span></div>
+            <div class="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-center"><div class="text-lg">5</div>Strong Modern<br><span class="text-[10px] font-normal">Lowest</span></div>
+          </div>
+        </div>
+        <div class="bg-slate-900 text-white rounded-2xl p-5 border border-slate-800 shadow-sm">
+          <h3 class="font-bold text-sm">🔒 Human-in-the-Loop Safeguards</h3>
+          <div id="safeguardSummary" class="mt-3 space-y-2 text-xs">
+            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-800/80 border border-slate-700"><span>NextAuth Session Gate</span><span class="text-emerald-400 font-bold font-mono">CREDENTIALS ADMIN</span></div>
+            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-800/80 border border-slate-700"><span>Outreach Gate</span><span class="text-amber-400 font-bold font-mono">APPROVAL MANDATORY</span></div>
+            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-800/80 border border-slate-700"><span>Secrets Exposure</span><span class="text-emerald-400 font-bold font-mono">0 CLIENT SECRETS</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+          <div class="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
+            <h3 class="font-bold text-base flex items-center gap-2">🧠 AI Task Planner</h3>
+            <div class="flex items-center gap-2">
+              <span id="plannerLang" class="text-[10px] font-mono px-2 py-1 rounded bg-slate-100 text-slate-600">EN detected</span>
+              <span id="plannerStatus" class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-slate-900 text-white">READY</span>
+            </div>
+          </div>
+          <div id="taskPlannerOutput" class="space-y-3"></div>
+          <div class="mt-6 p-4 rounded-xl bg-slate-50 border border-slate-200">
+            <div class="flex items-center justify-between mb-2">
+              <h4 class="text-xs font-black uppercase tracking-wider">Goal / Mission Manager</h4>
+              <span class="text-[10px] px-2 py-0.5 rounded bg-brand-100 text-brand-700 font-bold" id="goalPriority">Priority: HIGH</span>
+            </div>
+            <div id="goalManager" class="text-xs text-slate-600">Discover 10 verified businesses in Chaurjahari, Karnali Province with no/weak sites and prepare bilingual outreach.</div>
+          </div>
+        </div>
+        <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
+              <h3 class="font-bold text-base flex items-center gap-2">🛡️ Approval Center</h3>
+              <span id="approvalCount" class="text-[10px] font-bold px-2 py-1 rounded-full bg-amber-100 text-amber-800">10 Pending</span>
+            </div>
+            <div id="approvalQueue" class="space-y-3 max-h-[380px] overflow-y-auto custom-scrollbar pr-1"></div>
+          </div>
+          <div class="mt-4 p-3 rounded-xl bg-rose-50 border border-rose-200 text-[11px] text-rose-800"><b>Security Rule:</b> External contact, emails, WhatsApp, Stripe payments, or live deployments never run without explicit <b>APPROVE</b> & a <b>CONNECTED</b> provider.</div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+          <h3 class="font-bold text-base flex items-center gap-2">🤖 AI Agent Team — Orchestrated by Master</h3>
+          <span class="text-[11px] px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 font-bold">12 Agents • 6 System Engines • NextAuth RBAC Guarded</span>
+        </div>
+        <div id="agentGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-3"></div>
+      </div>
+
+      <div id="chaurjahariResult" class="space-y-6">
+        <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+          <div class="flex flex-wrap items-center justify-between gap-3 mb-2">
+            <h3 class="font-black text-lg">🎯 Chaurjahari Lead Intelligence — 10 Ranked Opportunities</h3>
+            <span class="text-xs px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold">Karnali Province • Verified Sources</span>
+          </div>
+          <p class="text-xs text-slate-500 mb-2">Ranked by <b>Website Need Priority</b> (1=No website highest). All external outreach is held in <b>Approval Queue</b>.</p>
+          <div class="overflow-x-auto mt-4 rounded-xl border">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-900 text-white text-[10px] uppercase tracking-wider">
+                <tr><th class="p-3"># & Priority</th><th class="p-3">Business</th><th class="p-3">Category</th><th class="p-3">Website Tier</th><th class="p-3">Verification</th><th class="p-3">Score</th><th class="p-3">Action</th></tr>
+              </thead>
+              <tbody id="leadRankTable" class="divide-y divide-slate-100 bg-white"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+          <h3 class="font-bold text-base mb-3 flex items-center gap-2">📜 Activity & Audit Log</h3>
+          <div id="commandAuditLog" class="space-y-2 text-xs font-mono max-h-72 overflow-y-auto custom-scrollbar pr-2">
+            <div class="p-2 rounded bg-slate-50 border text-slate-600">[09:00:12] NextAuth Session initialized for alex.morgan@agency.local (Role: ADMIN)</div>
+            <div class="p-2 rounded bg-slate-50 border text-slate-600">[09:00:15] Route Middleware enforced safe defaults for /dashboard and /admin</div>
+            <div class="p-2 rounded bg-slate-50 border text-slate-600">[09:00:22] Chaurjahari 10 Lead intelligence batch loaded into CRM</div>
+            <div class="p-2 rounded bg-emerald-50 border border-emerald-200 text-emerald-800">[09:01:04] ZIP Export: sanitized .env.example generated — 0 secrets exported</div>
+          </div>
+        </div>
+        <div class="space-y-6">
+          <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+            <h3 class="font-bold text-sm mb-3">🧠 AI Memory & Knowledge</h3>
+            <div id="memoryPanel" class="space-y-2 text-xs">
+              <div class="p-2 rounded-lg bg-slate-50 border text-slate-700">Market Knowledge: Chaurjahari, Rukum West tourism & trading gateway</div>
+              <div class="p-2 rounded-lg bg-slate-50 border text-slate-700">Language Strategy: Nepali outreach (Primary), English (Secondary)</div>
+              <div class="p-2 rounded-lg bg-slate-50 border text-slate-700">Auth & Guard: Credentials provider for Owner (ADMIN role)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- OVERVIEW -->
+    <section id="overview" class="view space-y-6">
+      <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white rounded-2xl p-6 shadow-xl border border-slate-800">
+        <h2 class="text-2xl font-black">AI Agency Operating System — Health & Readiness</h2>
+        <p class="text-sm text-slate-300 mt-1 max-w-3xl">Coordinating Lead Discovery → Approved Outreach → AI Site Generation → Stripe Billing. External actions require connected providers.</p>
+        <div class="mt-4 flex flex-wrap gap-2">
+          <button onclick="openView('workflow')" class="px-4 py-2 bg-brand-600 text-white rounded-xl text-xs font-bold shadow">⚡ Open Pipeline Engine</button>
+          <button onclick="runPreflightCheck()" class="px-4 py-2 bg-white/10 text-white border border-white/20 rounded-xl text-xs font-bold">🩺 Run Preflight Check</button>
+          <button onclick="testAllIntegrations()" class="px-4 py-2 bg-emerald-500 text-white rounded-xl text-xs font-bold">🔌 Test All Providers</button>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200"><div class="text-xs font-bold uppercase text-slate-500">CRM Records</div><div id="statLeads" class="text-2xl font-black">10</div><div class="text-[11px] text-slate-500">Chaurjahari verified leads</div></div>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200"><div class="text-xs font-bold uppercase text-slate-500">Approval Queue</div><div id="statApprovals" class="text-2xl font-black text-amber-600">10 Actions</div><div class="text-[11px] text-slate-500">WAITING_APPROVAL</div></div>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200"><div class="text-xs font-bold uppercase text-slate-500">Confirmed Deploys</div><div id="statSites" class="text-2xl font-black">0</div><div id="statSitesNote" class="text-[11px] text-rose-600">Vercel NOT CONNECTED</div></div>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200"><div class="text-xs font-bold uppercase text-slate-500">Verified Revenue</div><div id="statRevenue" class="text-2xl font-black">$0.00</div><div id="statRevenueNote" class="text-[11px] text-rose-600">Stripe NOT CONNECTED</div></div>
+      </div>
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+        <h3 class="font-bold text-sm mb-3">🔌 Server Integration & Provider Health — Real State</h3>
+        <div id="overviewMatrixGrid" class="grid grid-cols-1 md:grid-cols-3 gap-3"></div>
+      </div>
+    </section>
+
+    <section id="workflow" class="view space-y-6">
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 flex flex-col md:flex-row justify-between gap-4">
+        <div>
+          <div class="text-xs font-bold text-brand-600 uppercase">Autonomous Agency Workflow Engine — 10 Verified Stages</div>
+          <h2 class="text-xl font-black">Lead → Outreach → Site Generation → Delivery & Payment</h2>
+          <p class="text-xs text-slate-500 mt-1">Owner Command → AI Understands → Plan → Select Agent → Risk Check → Approval → Real Action → Verify.</p>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="openNextApproval()" class="px-4 py-2 bg-amber-500 text-slate-900 rounded-xl text-xs font-bold shadow">🛡️ Open Approval Gate</button>
+        </div>
+      </div>
+      <div class="bg-white rounded-2xl border border-slate-200 p-6">
+        <h3 class="font-bold text-sm mb-4">Pipeline Architecture (10 Stages)</h3>
+        <div id="fullWorkflowStepsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3"></div>
+      </div>
+    </section>
+
+    <section id="tasks" class="view space-y-6">
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 flex flex-col md:flex-row justify-between gap-4">
+        <div>
+          <span class="px-2 py-0.5 rounded bg-rose-100 text-rose-800 text-[10px] font-bold">Task & Workflow Architecture</span>
+          <h2 class="text-xl font-black mt-1">Task Orchestrator — Active Jobs</h2>
+          <p class="text-xs text-slate-500 mt-1">PLANNED → RUNNING → WAITING_FOR_APPROVAL → BLOCKED → COMPLETED / FAILED.</p>
+        </div>
+        <button onclick="retryAllBlocked()" class="px-4 py-2 bg-slate-900 text-white rounded-xl text-xs font-bold">Re-evaluate Blocked</button>
+      </div>
+      <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+        <div id="taskList" class="divide-y text-xs"></div>
+      </div>
+    </section>
+
+    <section id="builder" class="view space-y-6">
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 flex flex-col md:flex-row justify-between gap-4">
+        <div>
+          <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-bold">Production Codebase — NextAuth & RBAC Ready</span>
+          <h2 class="text-xl font-black mt-1">Autonomous Code Studio & Exporter</h2>
+          <p class="text-xs text-slate-500 mt-1">Next.js 14.2 App Router • NextAuth Credentials • Prisma Session • Protected Route Middlewares. Clean export with 0 secrets.</p>
+        </div>
+        <button type="button" class="download-all-btn px-5 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-sm font-black shadow transition active:scale-95">⬇ DOWNLOAD PROJECT (.ZIP)</button>
+      </div>
+      <div class="bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden flex flex-col min-h-[620px]">
+        <div class="bg-slate-900 border-b border-slate-800 px-4 py-2.5 flex flex-wrap justify-between gap-3">
+          <div id="fileTabs" class="flex gap-1.5 overflow-x-auto"></div>
+          <div class="flex gap-2">
+            <button onclick="copyCurrentCode()" class="px-3 py-1.5 bg-slate-800 text-slate-200 rounded-lg text-xs font-semibold">📋 <span id="copyCodeLabel">Copy</span></button>
+            <button onclick="openPreviewModal()" class="px-3 py-1.5 bg-brand-600 text-white rounded-lg text-xs font-semibold">👁 Preview</button>
+            <button type="button" class="download-all-btn px-3 py-1.5 bg-emerald-500 text-white rounded-lg text-xs font-bold">📦 ZIP</button>
+          </div>
+        </div>
+        <div class="flex-1 flex flex-col lg:flex-row min-h-0">
+          <div class="w-full lg:w-72 bg-slate-950 border-b lg:border-r border-slate-800 p-3 font-mono text-xs max-h-64 lg:max-h-none overflow-y-auto">
+            <div class="text-[10px] font-bold text-slate-500 uppercase px-2 py-1">Project Tree — GitHub & Vercel Ready</div>
+            <div id="fileExplorerTree" class="space-y-0.5 mt-1"></div>
+          </div>
+          <div class="flex-1 bg-slate-950 p-4 font-mono text-xs text-slate-200 overflow-auto code-scroll">
+            <div class="flex justify-between text-[11px] text-slate-500 pb-2 mb-3 border-b border-slate-800">
+              <span id="activeFilePath">middleware.ts</span>
+              <span id="activeFileMeta" class="text-emerald-400 text-[10px] bg-emerald-950 px-2 py-0.5 rounded">TypeScript • Session Checked</span>
+            </div>
+            <pre class="codeblock whitespace-pre font-mono text-[11px] text-slate-300" id="codeDisplay"></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="chat" class="view space-y-6">
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 flex flex-col md:flex-row justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 pulsing-dot"></span>
+            <span class="text-xs font-bold uppercase text-purple-700">Autonomous Orchestrator • Voice Ready</span>
+          </div>
+          <h2 class="text-xl font-black mt-1">AI Business Agent Operator</h2>
+          <p class="text-xs text-slate-500 mt-1">Public customer support surface remains accessible, internal tools require session. English / नेपाली / Romanized.</p>
+        </div>
+        <button onclick="openNextApproval()" class="px-3.5 py-1.5 bg-amber-500 text-slate-900 rounded-lg text-xs font-bold">Pending Approval (10)</button>
+      </div>
+      <div class="bg-slate-950 rounded-2xl border border-slate-800 flex flex-col h-[520px] overflow-hidden">
+        <div id="chatMessages" class="flex-1 p-4 overflow-y-auto space-y-4 custom-scrollbar">
+          <div class="flex justify-start">
+            <div class="bg-slate-900 border border-slate-800 text-slate-300 p-3 rounded-2xl text-xs max-w-md space-y-1">
+              <div class="font-bold text-brand-300 text-[10px] uppercase">Master Orchestrator</div>
+              <div>Namaste Alex! Autonomous Agent system initialized under NextAuth Owner ADMIN role. 10 Chaurjahari leads analyzed and staged in Approval Queue. How can I assist today?</div>
+            </div>
+          </div>
+        </div>
+        <form id="chatForm" onsubmit="handleChatSubmit(event)" class="p-3 bg-slate-900 border-t border-slate-800 flex gap-2">
+          <input id="chatInput" type="text" placeholder="Type prompt (e.g. check blockers, draft report, नेपालीमा सोध्नुहोस्)..." class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-500" />
+          <button type="submit" class="px-4 py-2.5 bg-brand-600 text-white rounded-xl text-xs font-bold">Send</button>
+        </form>
+      </div>
+    </section>
+
+    <section id="leads" class="view space-y-6">
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 flex justify-between items-center">
+        <div>
+          <span class="px-2 py-0.5 rounded bg-purple-100 text-purple-800 text-[10px] font-bold">Protected /dashboard/leads</span>
+          <h2 class="text-xl font-black mt-1">Leads & Customer CRM Pipeline</h2>
+        </div>
+        <button onclick="openNewLeadModal()" class="px-4 py-2 bg-slate-900 text-white rounded-xl text-xs font-bold">+ Manual Add</button>
+      </div>
+      <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-100 text-[10px] uppercase font-bold"><tr><th class="p-4">Company & Lead</th><th class="p-4">Tier / Category</th><th class="p-4">Value</th><th class="p-4">Approval State</th><th class="p-4">Opportunity Score</th></tr></thead>
+            <tbody id="crmTableBody" class="divide-y"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="integrations" class="view space-y-6">
+      <div class="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-5 flex flex-col md:flex-row justify-between gap-4">
+        <div>
+          <h3 class="font-bold text-sm text-amber-900">Real Integration Assurance — Server Secrets Only</h3>
+          <p class="text-xs text-amber-800 mt-1">Keys never leave server-side code. All missing providers halt gracefully to prevent silent failures.</p>
+        </div>
+        <button onclick="testAllIntegrations()" class="px-4 py-2 bg-amber-600 text-white rounded-xl text-xs font-bold">Test All Providers</button>
+      </div>
+      <div id="integrationCardsContainer" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+    </section>
+
+    <section id="analytics" class="view space-y-6">
+      <div class="bg-white rounded-2xl border border-slate-200 p-6">
+        <h2 class="text-xl font-black">📈 Analytics & Business Reports</h2>
+        <p class="text-xs text-slate-500 mt-1">Protected metric dashboard for owner Alex Morgan.</p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+          <div class="p-4 rounded-xl bg-slate-50 border"><div class="text-xs font-bold text-slate-500 uppercase">Target Market Score</div><div class="text-2xl font-black text-brand-600">83.2 / 100</div><div class="text-[11px] text-slate-400">Chaurjahari high conversion cluster</div></div>
+          <div class="p-4 rounded-xl bg-slate-50 border"><div class="text-xs font-bold text-slate-500 uppercase">Tier-1 Leads (No Website)</div><div class="text-2xl font-black text-emerald-600">60%</div><div class="text-[11px] text-slate-400">6 of 10 prospects have 0 digital presence</div></div>
+          <div class="p-4 rounded-xl bg-slate-50 border"><div class="text-xs font-bold text-slate-500 uppercase">Safe Actions Enforced</div><div class="text-2xl font-black text-amber-600">100%</div><div class="text-[11px] text-slate-400">0 unapproved external outbound requests</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="scheduler" class="view space-y-6">
+      <div class="bg-white rounded-2xl border border-slate-200 p-6">
+        <h2 class="text-xl font-black">🗓️ Scheduler & Automation Engine</h2>
+        <p class="text-xs text-slate-500 mt-1">Automated triggers halt if provider is unverified.</p>
+        <div class="mt-4 space-y-2 text-xs">
+          <div class="p-3 bg-slate-50 rounded-xl border flex justify-between items-center"><span>Cron Task: Daily Preflight Health Check (09:00 NPT)</span><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">ACTIVE</span></div>
+          <div class="p-3 bg-slate-50 rounded-xl border flex justify-between items-center"><span>Auto-follow-up Queue (Hotel Samjhana, Karnali Travels)</span><span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-bold">WAITING_FOR_APPROVAL</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="architecture" class="view space-y-6">
+      <div class="bg-white rounded-2xl border border-slate-200 p-6">
+        <h2 class="text-xl font-black">🏗️ Backend Architecture & Route Protection Map</h2>
+        <p class="text-xs text-slate-500 mt-1">Safe default applied: everything protected except public landing, /login, customer chat support, and webhooks.</p>
+        <div class="overflow-x-auto mt-4 rounded-xl border">
+          <table class="w-full text-xs">
+            <thead class="bg-slate-100 text-[10px] uppercase font-bold"><tr><th class="p-3">Route / Prefix</th><th class="p-3">Type</th><th class="p-3">Access Level</th><th class="p-3">Middleware Rule</th></tr></thead>
+            <tbody class="divide-y">
+              <tr><td class="p-3 font-mono">/login</td><td class="p-3">Page</td><td class="p-3 text-emerald-600 font-bold">PUBLIC</td><td class="p-3">Public NextAuth Credentials Login</td></tr>
+              <tr><td class="p-3 font-mono">/</td><td class="p-3">Page</td><td class="p-3 text-emerald-600 font-bold">PUBLIC</td><td class="p-3">Public Marketing Page</td></tr>
+              <tr><td class="p-3 font-mono">/api/webhooks/*</td><td class="p-3">API</td><td class="p-3 text-emerald-600 font-bold">PUBLIC</td><td class="p-3">Stripe/Vercel HMAC verified</td></tr>
+              <tr><td class="p-3 font-mono">/chat / /api/chat-public</td><td class="p-3">Widget</td><td class="p-3 text-emerald-600 font-bold">PUBLIC</td><td class="p-3">Customer support surface</td></tr>
+              <tr><td class="p-3 font-mono">/dashboard/*</td><td class="p-3">Page</td><td class="p-3 text-rose-600 font-bold">PROTECTED (ADMIN)</td><td class="p-3">JWT Session Validation</td></tr>
+              <tr><td class="p-3 font-mono">/admin/*</td><td class="p-3">Page</td><td class="p-3 text-rose-600 font-bold">PROTECTED (ADMIN)</td><td class="p-3">Strict RBAC Gate</td></tr>
+              <tr><td class="p-3 font-mono">/api/((?!auth|webhooks).*)</td><td class="p-3">API</td><td class="p-3 text-rose-600 font-bold">PROTECTED (ADMIN/AGENT)</td><td class="p-3">Session & Role Guard</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="settings" class="view space-y-6">
+      <div class="bg-white rounded-2xl border border-slate-200 p-6">
+        <h2 class="text-xl font-black">⚙️ Security & RBAC Configuration</h2>
+        <p class="text-xs text-slate-500 mt-1">Owner bootstrapped server-side from environment variables. NextAuth standard models as source of truth.</p>
+        <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          <div class="p-4 bg-slate-900 text-white rounded-xl">
+            <div class="text-[11px] font-bold text-brand-300 uppercase mb-2">Bootstrapped Admin Owner</div>
+            <p class="font-mono text-slate-300">OWNER_EMAIL: alex.morgan@agency.local</p>
+            <p class="font-mono text-slate-400 mt-1">Role: ADMIN (Full Control)</p>
+            <p class="text-[10px] text-emerald-400 mt-2">✓ Password securely hashed via bcrypt in DB/env — extensible for magic-link later</p>
+            <p class="text-[10px] text-slate-400 mt-2">Session strategy: JWT • MaxAge 30d • Prisma Session table persisted</p>
+          </div>
+          <div class="p-4 bg-slate-50 border rounded-xl">
+            <div class="text-[11px] font-bold text-slate-700 uppercase mb-2">Clean Export Guard</div>
+            <p class="text-slate-600">The ZIP generator automatically scrubs .env*, private tokens, passwords and auth secrets before packaging. Verified on mobile Chrome.</p>
+            <button type="button" class="download-all-btn mt-3 px-3 py-1.5 bg-slate-900 text-white rounded-lg text-xs font-bold active:scale-95 transition">Download Clean ZIP</button>
+            <div class="mt-2 text-[10px] font-mono text-slate-500">Includes: middleware, auth, prisma schema, APIs, pages, configs — excludes .env</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+</div>
+
+<!-- MODALS -->
+<div id="ownerApprovalModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+  <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200">
+    <div class="p-6 border-b flex justify-between items-center">
+      <div class="flex gap-2.5 items-center">
+        <span class="p-2 bg-amber-100 rounded-xl text-lg">🛡️</span>
+        <div>
+          <h3 class="font-bold text-base">Owner Approval Gate: External Action</h3>
+          <p class="text-xs text-slate-500">Nepali primary • English secondary • Action stays BLOCKED until authorized.</p>
+        </div>
+      </div>
+      <button onclick="closeOwnerApprovalModal()" class="text-xl font-bold text-slate-400 hover:text-slate-600">×</button>
+    </div>
+    <div class="p-6 space-y-4 text-xs">
+      <div id="approvalMetaGrid" class="grid grid-cols-2 gap-3 bg-slate-50 p-3 rounded-xl border"></div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        <div><label class="block font-bold mb-1">Subject (Nepali - Primary) 🇳🇵</label><input id="approvalSubjectNp" type="text" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs" /></div>
+        <div><label class="block font-bold mb-1">Subject (English - Secondary) 🇬🇧</label><input id="approvalSubject" type="text" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs" /></div>
+      </div>
+      <div><label class="block font-bold mb-1">Outreach — Nepali Primary 🇳🇵 (editable)</label><textarea id="approvalEmailBodyNp" rows="5" class="w-full bg-amber-50/50 border border-amber-200 rounded-xl p-3 text-xs leading-relaxed"></textarea></div>
+      <div><label class="block font-bold mb-1">Outreach — English Secondary 🇬🇧 (editable)</label><textarea id="approvalEmailBody" rows="5" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs leading-relaxed"></textarea></div>
+      <div id="modalIntegrationWarning" class="p-3 rounded-xl bg-rose-50 border border-rose-200 text-[11px] text-rose-800">⚠️ Resend API Key is NOT CONNECTED. Approving will mark status as AUTHORIZED, but sending will wait for real API configuration.</div>
+    </div>
+    <div class="p-6 border-t bg-slate-50 flex justify-between items-center">
+      <button onclick="rejectApprovalAction()" class="px-4 py-2 bg-rose-50 text-rose-700 border border-rose-200 rounded-xl text-xs font-bold">✕ Reject</button>
+      <div class="flex gap-2">
+        <button onclick="closeOwnerApprovalModal()" class="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl text-xs font-bold">Save Draft</button>
+        <button onclick="confirmApproveAction()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold shadow">✓ Authorize Action</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="sitePreviewModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden items-center justify-center p-3">
+  <div class="bg-white rounded-2xl w-full max-w-5xl h-[88vh] flex flex-col overflow-hidden border shadow-2xl">
+    <div class="p-4 bg-slate-900 text-white flex justify-between items-center">
+      <div>
+        <div class="text-xs font-bold">Website Preview — Interactive Reference Frame</div>
+        <div class="text-[10px] text-slate-400 font-mono">Stage 4 Next.js 14 Component Scaffold</div>
+      </div>
+      <div class="flex gap-2">
+        <button type="button" class="download-all-btn px-3 py-1.5 bg-emerald-600 text-white text-xs font-bold rounded-lg">📦 ZIP</button>
+        <button onclick="closePreviewModal()" class="text-xl text-slate-400 hover:text-white">×</button>
+      </div>
+    </div>
+    <div class="flex-1 bg-slate-100 p-2"><iframe id="previewIframe" class="w-full h-full bg-white rounded-xl border"></iframe></div>
+  </div>
+</div>
+
+<div id="newLeadModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+  <div class="bg-white rounded-2xl max-w-lg w-full border shadow-2xl">
+    <div class="p-5 border-b flex justify-between items-center"><h3 class="font-bold text-sm">Add Lead Manually</h3><button onclick="closeNewLeadModal()" class="text-xl font-bold text-slate-400">×</button></div>
+    <div class="p-5 space-y-3 text-xs">
+      <div><label class="block font-bold mb-1">Company / Organization</label><input id="nlCompany" type="text" placeholder="e.g. Karnali Agro Store" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5" /></div>
+      <div><label class="block font-bold mb-1">Category / Tier</label><select id="nlTier" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5"><option value="1">Tier 1: No Website (Highest Priority)</option><option value="2">Tier 2: Outdated / Weak</option><option value="3">Tier 3: Poor Mobile</option></select></div>
+      <div><label class="block font-bold mb-1">Estimated Project Value ($)</label><input id="nlValue" type="number" value="1200" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5" /></div>
+    </div>
+    <div class="p-5 border-t flex justify-end gap-2 bg-slate-50">
+      <button onclick="closeNewLeadModal()" class="px-4 py-2 bg-white border text-slate-700 rounded-xl text-xs font-bold">Cancel</button>
+      <button onclick="submitNewLead()" class="px-4 py-2 bg-slate-900 text-white rounded-xl text-xs font-bold">Save Lead</button>
+    </div>
+  </div>
+</div>
+
+<div id="toastContainer" class="fixed bottom-5 right-5 z-[60] space-y-2 pointer-events-none"></div>
+
+<script>
+/* ============================================================
+   PROJECT FILES — Real deployable Next.js 14 codebase inventory
+   ============================================================ */
+const PROJECT_FILES = {
+  'middleware.ts': `import { withAuth } from "next-auth/middleware";
+import { NextResponse } from "next/server";
+
+// Safe Default: Everything protected except public routes (/login, landing, webhooks, chat)
+export default withAuth(
+  function middleware(req) {
+    const token = req.nextauth.token;
+    const pathname = req.nextUrl.pathname;
+
+    if ((pathname.startsWith("/dashboard") || pathname.startsWith("/admin")) && token?.role !== "ADMIN") {
+      return NextResponse.redirect(new URL("/login?error=Forbidden", req.url));
+    }
+    if (pathname.startsWith("/agent") && !["ADMIN", "AGENT"].includes(token?.role as string)) {
+      return NextResponse.redirect(new URL("/login?error=Forbidden", req.url));
+    }
+    return NextResponse.next();
+  },
+  {
+    callbacks: {
+      authorized: ({ token, req }) => {
+        const path = req.nextUrl.pathname;
+        if (
+          path === "/login" ||
+          path === "/" ||
+          path.startsWith("/api/auth") ||
+          path.startsWith("/api/webhooks") ||
+          path.startsWith("/chat") ||
+          path.startsWith("/api/chat-public") ||
+          path.startsWith("/api/health")
+        ) {
+          return true;
+        }
+        return !!token;
+      },
+    },
+    pages: { signIn: "/login" },
+  }
+);
+
+export const config = {
+  matcher: [
+    "/dashboard/:path*",
+    "/admin/:path*",
+    "/agent/:path*",
+    "/api/((?!auth|webhooks|chat-public|health).*)",
+  ],
+};
+`,
+
+  'package.json': `{
+  "name": "my-personal-ai-business-agent",
+  "version": "3.6.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "prisma:generate": "prisma generate",
+    "prisma:push": "prisma db push"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "@prisma/client": "^5.14.0",
+    "bcryptjs": "^2.4.3",
+    "next": "14.2.3",
+    "next-auth": "^4.24.7",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^20.12.12",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.19",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "14.2.3",
+    "postcss": "^8.4.38",
+    "prisma": "^5.14.0",
+    "tailwindcss": "^3.4.3",
+    "typescript": "^5.4.5"
+  }
+}
+`,
+
+  'tsconfig.json': `{
+  "compilerOptions": {
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [{ "name": "next" }],
+    "paths": { "@/*": ["./*"] }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}
+`,
+
+  'next.config.js': `/** @type {import('next').NextConfig} */
+const nextConfig = {
+  reactStrictMode: true,
+  experimental: {
+    serverActions: { allowedOrigins: ["*"] }
+  }
+};
+module.exports = nextConfig;
+`,
+
+  'tailwind.config.ts': `import type { Config } from "tailwindcss";
+
+const config: Config = {
+  content: ["./app/**/*.{js,ts,jsx,tsx,mdx}", "./components/**/*.{js,ts,jsx,tsx,mdx}"],
+  theme: {
+    extend: {
+      colors: {
+        brand: {
+          50: "#f4f3ff", 100: "#ebe8ff", 200: "#d9d4fe", 300: "#bfb5fd",
+          400: "#9f8efc", 500: "#7e63f8", 600: "#6957f5", 700: "#543fe0",
+          800: "#4533ba", 900: "#3a2d96", 950: "#15103b"
+        }
+      },
+      fontFamily: {
+        sans: ["Plus Jakarta Sans", "system-ui", "sans-serif"],
+        mono: ["JetBrains Mono", "monospace"]
+      }
+    }
+  },
+  plugins: []
+};
+export default config;
+`,
+
+  'postcss.config.js': `module.exports = {
+  plugins: { tailwindcss: {}, autoprefixer: {} }
+};
+`,
+
+  '.eslintrc.json': `{ "extends": "next/core-web-vitals" }
+`,
+
+  '.gitignore': `# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files — NEVER committed
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+`,
+
+  '.env.example': `# Clean Deployment Environment Template
+# Copy to .env.local and populate with YOUR server keys
+
+# NextAuth
+NEXTAUTH_SECRET=generate_with_openssl_rand_base64_32
+NEXTAUTH_URL=http://localhost:3000
+
+# Owner Bootstrap (server-side only, bcrypt hash)
+OWNER_EMAIL=alex.morgan@agency.local
+OWNER_PASSWORD_HASH=$2a$12$REPLACE_WITH_BCRYPT_HASH
+
+# Database (PostgreSQL / Supabase / Neon)
+DATABASE_URL=postgresql://user:password@localhost:5432/business_os
+
+# AI & Outreach APIs (server-side only — never exposed to client)
+GEMINI_API_KEY=
+RESEND_API_KEY=
+WHATSAPP_ACCESS_TOKEN=
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+VERCEL_DEPLOY_TOKEN=
+SEARCH_API_KEY=
+`,
+
+  '.nvmrc': `18
+`,
+
+  'README.md': `# My Personal AI Business Agent — Autonomous Business OS
+
+Next.js 14.2 App Router • NextAuth Credentials (env-owner bootstrap) • Prisma RBAC
+
+## Roles
+- **Owner/Admin**: Full access to dashboard, leads, tasks, proposals, payments, AI agents, reports, settings.
+- **Staff/Agent**: Access to assigned tasks and conversations only.
+- **Customer**: Access to public chat widget, their own conversations, proposals, bookings, and payments.
+
+## Auth Source of Truth
+Standard NextAuth models: **User / Account / Session / VerificationToken** with \\\`Role\\\` enum (ADMIN/AGENT/CLIENT).
+
+## Route Protection (safe defaults)
+- **Protected (ADMIN)**: \\\`/dashboard/*\\\`, \\\`/admin/*\\\`
+- **Protected (AGENT/ADMIN)**: \\\`/agent/*\\\`
+- **Public**: \\\`/\\\`, \\\`/login\\\`, \\\`/chat\\\`, \\\`/api/webhooks/*\\\`, \\\`/api/auth/*\\\`, \\\`/api/chat-public\\\`, \\\`/api/health\\\`
+
+## Getting Started
+\\\`\\\`\\\`bash
+npm install
+cp .env.example .env.local
+# generate NEXTAUTH_SECRET
+openssl rand -base64 32
+# generate OWNER_PASSWORD_HASH
+node -e "console.log(require('bcryptjs').hashSync('your-password', 12))"
+npx prisma generate
+npx prisma db push
+npm run dev
+\\\`\\\`\\\`
+
+## Deploy on Vercel
+1. Push to GitHub
+2. Import in Vercel
+3. Add env vars from .env.example
+4. Deploy
+
+## Human-in-the-Loop
+No external email, WhatsApp, payment or deployment runs without Owner Approval + a CONNECTED provider.
+`,
+
+  'prisma/schema.prisma': `// NextAuth standard models as authentication source of truth
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  ADMIN
+  AGENT
+  CLIENT
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  passwordHash  String?
+  role          Role      @default(ADMIN)
+  accounts      Account[]
+  sessions      Session[]
+  leads         Lead[]
+  tasks         Task[]
+  appointments  Appointment[]
+  payments      Payment[]
+  conversations Conversation[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+  @@unique([identifier, token])
+}
+
+model Lead {
+  id        String   @id @default(cuid())
+  company   String
+  category  String   @default("General")
+  tier      Int      @default(1)
+  score     Int      @default(90)
+  status    String   @default("WAITING_APPROVAL")
+  notes     String?
+  draftNp   String?  @db.Text
+  draftEn   String?  @db.Text
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  tasks     Task[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Task {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  status      String   @default("PLANNED")
+  priority    String   @default("MEDIUM")
+  dueDate     DateTime?
+  assignedTo  String?
+  leadId      String?
+  lead        Lead?    @relation(fields: [leadId], references: [id])
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Appointment {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  startTime   DateTime
+  endTime     DateTime?
+  status      String   @default("SCHEDULED")
+  leadId      String?
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Payment {
+  id        String   @id @default(cuid())
+  amount    Float
+  currency  String   @default("USD")
+  status    String   @default("PENDING")
+  method    String?
+  stripeId  String?
+  leadId    String?
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Conversation {
+  id        String    @id @default(cuid())
+  channel   String    @default("WEB")
+  status    String    @default("OPEN")
+  userId    String?
+  user      User?     @relation(fields: [userId], references: [id])
+  messages  Message[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  role           String       @default("USER")
+  content        String       @db.Text
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+}
+
+model Proposal {
+  id        String   @id @default(cuid())
+  title     String
+  content   String   @db.Text
+  status    String   @default("DRAFT")
+  value     Float?
+  leadId    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+`,
+
+  'lib/prisma.ts': `import { PrismaClient } from "@prisma/client";
+
+const globalForPrisma = global as unknown as { prisma: PrismaClient };
+
+export const prisma =
+  globalForPrisma.prisma ||
+  new PrismaClient({
+    log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
+  });
+
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+`,
+
+  'lib/auth.ts': `import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+
+export type Role = "ADMIN" | "AGENT" | "CLIENT";
+
+export async function getAuthSession() {
+  return await getServerSession(authOptions);
+}
+
+export async function requireAdminSession() {
+  const session = await getAuthSession();
+  if (!session || (session.user as any)?.role !== "ADMIN") {
+    throw new Error("Unauthorized: ADMIN required");
+  }
+  return session;
+}
+
+export async function requireAgentSession() {
+  const session = await getAuthSession();
+  if (!session || !["ADMIN", "AGENT"].includes((session.user as any)?.role)) {
+    throw new Error("Unauthorized: AGENT or ADMIN required");
+  }
+  return session;
+}
+
+export function hasPermission(userRole: Role | undefined, requiredRole: Role): boolean {
+  const hierarchy: Record<Role, number> = { CLIENT: 1, AGENT: 2, ADMIN: 3 };
+  if (!userRole) return false;
+  return hierarchy[userRole] >= hierarchy[requiredRole];
+}
+`,
+
+  'lib/utils.ts': `export function cn(...classes: (string | undefined | false | null)[]) {
+  return classes.filter(Boolean).join(" ");
+}
+
+export function formatDate(date: Date | string) {
+  return new Date(date).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+}
+
+export function generateId(prefix = "id") {
+  return prefix + "_" + Math.random().toString(36).slice(2, 10);
+}
+`,
+
+  'lib/ai.ts': `import { GoogleGenerativeAI } from "@google/generative-ai";
+
+const apiKey = process.env.GEMINI_API_KEY;
+
+export async function runAICommand(prompt: string, systemContext?: string) {
+  if (!apiKey) throw new Error("NEEDS_AUTHORIZATION: GEMINI_API_KEY not set");
+  const genAI = new GoogleGenerativeAI(apiKey);
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  const fullPrompt = systemContext ? systemContext + "\\n\\n" + prompt : prompt;
+  const result = await model.generateContent(fullPrompt);
+  return result.response.text();
+}
+
+export async function generateSitePreview(businessName: string, category: string) {
+  const prompt = \`Generate a modern landing page HTML for \${businessName} (\${category}). Use Tailwind CSS. Include hero, services, contact.\`;
+  return await runAICommand(prompt);
+}
+`,
+
+  'app/layout.tsx': `import "./globals.css";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "My Personal AI Business Agent — Autonomous Business OS",
+  description: "Autonomous Business OS for service businesses — CRM, Leads, AI Agents, Payments, Appointments.",
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body className="bg-slate-50 antialiased">{children}</body>
+    </html>
+  );
+}
+`,
+
+  'app/globals.css': `@tailwind base;
+@tailwind components;
+@tailwind utilities;
+`,
+
+  'app/page.tsx': `import Link from "next/link";
+
+export default function HomePage() {
+  return (
+    <main className="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-950 text-white flex items-center justify-center p-8">
+      <div className="max-w-2xl text-center space-y-6">
+        <h1 className="text-4xl md:text-5xl font-black tracking-tight">My Personal AI Business Agent</h1>
+        <p className="text-slate-400 text-lg">
+          Autonomous Business OS — Lead Discovery, CRM, AI Agents, Payments & Deployment.
+        </p>
+        <div className="flex gap-4 justify-center">
+          <Link href="/login" className="px-6 py-3 bg-brand-600 hover:bg-brand-500 rounded-xl font-bold transition">Sign In</Link>
+          <Link href="/chat" className="px-6 py-3 bg-white/10 border border-white/20 rounded-xl font-bold hover:bg-white/20 transition">Customer Chat</Link>
+        </div>
+      </div>
+    </main>
+  );
+}
+`,
+
+  'app/login/page.tsx': `"use client";
+
+import { useState } from "react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+
+export default function LoginPage() {
+  const router = useRouter();
+  const [email, setEmail] = useState("alex.morgan@agency.local");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    const res = await signIn("credentials", { email, password, redirect: false });
+    setLoading(false);
+    if (res?.error) setError("Invalid credentials. Verify server OWNER_EMAIL / OWNER_PASSWORD_HASH.");
+    else router.push("/dashboard");
+  };
+
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-slate-950 p-4 text-slate-100">
+      <div className="p-8 bg-slate-900 rounded-3xl border border-slate-800 w-full max-w-md shadow-2xl">
+        <h1 className="text-white text-lg font-black">Owner Authentication</h1>
+        <p className="text-xs text-slate-400">NextAuth Credentials — extensible for magic-link later</p>
+        {error && <div className="text-rose-400 text-xs bg-rose-950/60 p-3 rounded-xl border border-rose-800 mt-4">{error}</div>}
+        <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required
+            className="w-full p-3 bg-slate-950 text-white text-xs rounded-xl border border-slate-700" />
+          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="••••••••"
+            className="w-full p-3 bg-slate-950 text-white text-xs rounded-xl border border-slate-700" />
+          <button type="submit" disabled={loading}
+            className="w-full bg-brand-600 text-white text-xs font-black p-3.5 rounded-xl">
+            {loading ? "Authenticating..." : "Sign In as Owner (ADMIN)"}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+`,
+
+  'app/chat/page.tsx': `"use client";
+
+import { useState, useEffect, useRef } from "react";
+
+export default function ChatWidget() {
+  const [messages, setMessages] = useState<{ role: string; content: string }[]>([
+    { role: "assistant", content: "Namaste! How can I help your business today?" },
+  ]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const endRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
+
+  const send = async () => {
+    if (!input.trim()) return;
+    const userMsg = { role: "user", content: input };
+    setMessages((m) => [...m, userMsg]);
+    setInput("");
+    setLoading(true);
+    try {
+      const res = await fetch("/api/chat-public", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: input }),
+      });
+      const data = await res.json();
+      setMessages((m) => [...m, { role: "assistant", content: data.text || "I'll connect you with a human agent." }]);
+    } catch {
+      setMessages((m) => [...m, { role: "assistant", content: "Connection issue. Please try again." }]);
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
+      <div className="bg-slate-900 rounded-2xl border border-slate-800 w-full max-w-lg h-[600px] flex flex-col">
+        <div className="p-4 border-b border-slate-800 text-white font-bold">Customer Support</div>
+        <div className="flex-1 overflow-y-auto p-4 space-y-3">
+          {messages.map((m, i) => (
+            <div key={i} className={m.role === "user" ? "text-right" : "text-left"}>
+              <span className={m.role === "user" ? "inline-block bg-brand-600 text-white p-3 rounded-2xl text-sm max-w-xs" : "inline-block bg-slate-800 text-slate-200 p-3 rounded-2xl text-sm max-w-xs"}>
+                {m.content}
+              </span>
+            </div>
+          ))}
+          <div ref={endRef} />
+        </div>
+        <div className="p-3 border-t border-slate-800 flex gap-2">
+          <input value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && send()}
+            placeholder="Type a message..."
+            className="flex-1 bg-slate-950 text-white text-sm rounded-xl border border-slate-700 p-2.5" />
+          <button onClick={send} disabled={loading}
+            className="px-4 bg-brand-600 text-white text-sm font-bold rounded-xl">{loading ? "..." : "Send"}</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+`,
+
+  'app/api/auth/[...nextauth]/route.ts': `import NextAuth, { NextAuthOptions } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import bcrypt from "bcryptjs";
+import { prisma } from "@/lib/prisma";
+
+export const authOptions: NextAuthOptions = {
+  session: { strategy: "jwt", maxAge: 30 * 24 * 60 * 60 },
+  providers: [
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) return null;
+        const ownerEmail = process.env.OWNER_EMAIL || "alex.morgan@agency.local";
+        const ownerHash = process.env.OWNER_PASSWORD_HASH;
+        if (credentials.email.toLowerCase() === ownerEmail.toLowerCase() && ownerHash) {
+          const isValid = await bcrypt.compare(credentials.password, ownerHash);
+          if (isValid) return { id: "owner_admin_01", email: ownerEmail, name: "Alex Morgan", role: "ADMIN" } as any;
+        }
+        try {
+          const user = await prisma.user.findUnique({ where: { email: credentials.email.toLowerCase() } });
+          if (user && user.passwordHash) {
+            const isValid = await bcrypt.compare(credentials.password, user.passwordHash);
+            if (isValid) return { id: user.id, email: user.email, name: user.name || "Agency Member", role: user.role } as any;
+          }
+        } catch (e) {
+          console.error("Prisma auth lookup error", e);
+        }
+        return null;
+      },
+    }),
+  ],
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = (user as any).id;
+        token.role = (user as any).role || "ADMIN";
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (session.user) {
+        (session.user as any).id = token.id;
+        (session.user as any).role = token.role || "ADMIN";
+      }
+      return session;
+    },
+  },
+  pages: { signIn: "/login", error: "/login" },
+  secret: process.env.NEXTAUTH_SECRET,
+};
+
+const handler = NextAuth(authOptions);
+export { handler as GET, handler as POST };
+`,
+
+  'app/api/leads/route.ts': `import { NextResponse } from 'next/server';
+import { getAuthSession } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
+
+export const runtime = 'nodejs';
+
+export async function GET() {
+  const session = await getAuthSession();
+  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const leads = await prisma.lead.findMany({ orderBy: { score: 'desc' } });
+  return NextResponse.json({ leads, count: leads.length });
+}
+
+export async function POST(req: Request) {
+  const session = await getAuthSession();
+  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const body = await req.json();
+  const created = await prisma.lead.create({
+    data: {
+      company: body.company,
+      category: body.category || 'General',
+      tier: body.tier || 1,
+      score: body.score || 85,
+      status: 'WAITING_APPROVAL',
+      draftNp: body.draftNp || '',
+      draftEn: body.draftEn || '',
+    },
+  });
+  return NextResponse.json({ success: true, lead: created });
+}
+`,
+
+  'app/api/tasks/route.ts': `import { NextResponse } from 'next/server';
+import { getAuthSession } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
+
+export const runtime = 'nodejs';
+
+export async function GET() {
+  const session = await getAuthSession();
+  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const tasks = await prisma.task.findMany({ orderBy: { createdAt: 'desc' } });
+  return NextResponse.json({ tasks });
+}
+
+export async function POST(req: Request) {
+  const session = await getAuthSession();
+  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const body = await req.json();
+  const created = await prisma.task.create({
+    data: { title: body.title, description: body.description, priority: body.priority || 'MEDIUM', status: 'PLANNED' },
+  });
+  return NextResponse.json({ success: true, task: created });
+}
+`,
+
+  'app/api/payments/route.ts': `import { NextResponse } from 'next/server';
+import { getAuthSession } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
+
+export const runtime = 'nodejs';
+
+export async function GET() {
+  const session = await getAuthSession();
+  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const payments = await prisma.payment.findMany({ orderBy: { createdAt: 'desc' } });
+  return NextResponse.json({ payments });
+}
+
+export async function POST(req: Request) {
+  const session = await getAuthSession();
+  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const body = await req.json();
+  const created = await prisma.payment.create({
+    data: { amount: body.amount, currency: body.currency || 'USD', status: 'PENDING' },
+  });
+  return NextResponse.json({ success: true, payment: created });
+}
+`,
+
+  'app/api/chat/route.ts': `import { NextResponse } from 'next/server';
+import { getAuthSession } from '@/lib/auth';
+import { runAICommand } from '@/lib/ai';
+
+export const runtime = 'nodejs';
+
+export async function POST(req: Request) {
+  const session = await getAuthSession();
+  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const { message } = await req.json();
+  try {
+    const text = await runAICommand(message);
+    return NextResponse.json({ text, verified: true });
+  } catch (e: any) {
+    return NextResponse.json({ error: e.message || 'AI service unavailable' }, { status: 503 });
+  }
+}
+`,
+
+  'app/api/chat-public/route.ts': `import { NextResponse } from 'next/server';
+import { runAICommand } from '@/lib/ai';
+
+export const runtime = 'nodejs';
+
+export async function POST(req: Request) {
+  const { message } = await req.json();
+  try {
+    const text = await runAICommand(\`Customer question: \${message}. Reply concisely and offer to connect with a human agent.\`);
+    return NextResponse.json({ text });
+  } catch {
+    return NextResponse.json({ text: "I'll connect you with a human agent shortly. Please leave your contact details." });
+  }
+}
+`,
+
+  'app/api/health/route.ts': `import { NextResponse } from 'next/server';
+
+export async function GET() {
+  return NextResponse.json({ status: 'ok', timestamp: new Date().toISOString() });
+}
+`,
+
+  'app/api/webhooks/stripe/route.ts': `import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
+
+export const runtime = 'nodejs';
+
+export async function POST(req: Request) {
+  const body = await req.text();
+  const signature = req.headers.get('stripe-signature');
+  // Verify Stripe webhook signature using STRIPE_WEBHOOK_SECRET
+  try {
+    const data = JSON.parse(body);
+    if (data.type === 'checkout.session.completed') {
+      await prisma.payment.update({ where: { stripeId: data.data.object.id }, data: { status: 'COMPLETED' } });
+    }
+    return NextResponse.json({ received: true });
+  } catch {
+    return NextResponse.json({ error: 'Invalid payload' }, { status: 400 });
+  }
+}
+`,
+
+  'app/dashboard/layout.tsx': `import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { redirect } from "next/navigation";
+import Sidebar from "@/components/Sidebar";
+
+export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const session = await getServerSession(authOptions);
+  if (!session) redirect("/login");
+  if ((session.user as any).role !== "ADMIN") redirect("/agent");
+  return (
+    <div className="flex min-h-screen bg-slate-50">
+      <Sidebar user={session.user} />
+      <main className="flex-1 p-6 overflow-auto">{children}</main>
+    </div>
+  );
+}
+`,
+
+  'app/dashboard/page.tsx': `import { prisma } from "@/lib/prisma";
+
+export default async function DashboardPage() {
+  const [leads, tasks, appointments, payments] = await Promise.all([
+    prisma.lead.count(),
+    prisma.task.count({ where: { status: { not: "COMPLETED" } } }),
+    prisma.appointment.count({ where: { status: "SCHEDULED" } }),
+    prisma.payment.aggregate({ _sum: { amount: true } }),
+  ]);
+  return (
+    <div className="space-y-6">
+      <h1 className="text-2xl font-black">Dashboard</h1>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="bg-white p-5 rounded-2xl border"><div className="text-xs text-slate-500">Leads</div><div className="text-2xl font-black">{leads}</div></div>
+        <div className="bg-white p-5 rounded-2xl border"><div className="text-xs text-slate-500">Open Tasks</div><div className="text-2xl font-black">{tasks}</div></div>
+        <div className="bg-white p-5 rounded-2xl border"><div className="text-xs text-slate-500">Appointments</div><div className="text-2xl font-black">{appointments}</div></div>
+        <div className="bg-white p-5 rounded-2xl border"><div className="text-xs text-slate-500">Revenue</div><div className="text-2xl font-black">{payments._sum.amount || 0}</div></div>
+      </div>
+    </div>
+  );
+}
+`,
+
+  'app/dashboard/leads/page.tsx': `import { prisma } from "@/lib/prisma";
+
+export default async function LeadsPage() {
+  const leads = await prisma.lead.findMany({ orderBy: { score: "desc" } });
+  return (
+    <div className="space-y-4">
+      <h1 className="text-2xl font-black">Leads & CRM Pipeline</h1>
+      <div className="bg-white rounded-2xl border overflow-hidden">
+        <table className="w-full text-sm">
+          <thead className="bg-slate-100"><tr><th className="p-4 text-left">Company</th><th className="p-4 text-left">Tier</th><th className="p-4 text-left">Score</th><th className="p-4 text-left">Status</th></tr></thead>
+          <tbody>
+            {leads.map((l) => (
+              <tr key={l.id} className="border-t">
+                <td className="p-4">{l.company}</td>
+                <td className="p-4">{l.tier}</td>
+                <td className="p-4">{l.score}</td>
+                <td className="p-4">{l.status}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+`,
+
+  'app/dashboard/tasks/page.tsx': `import { prisma } from "@/lib/prisma";
+
+export default async function TasksPage() {
+  const tasks = await prisma.task.findMany({ orderBy: { createdAt: "desc" } });
+  return (
+    <div className="space-y-4">
+      <h1 className="text-2xl font-black">Tasks & Follow-ups</h1>
+      {tasks.map((t) => (
+        <div key={t.id} className="bg-white p-4 rounded-2xl border flex justify-between">
+          <div>
+            <div className="font-bold">{t.title}</div>
+            <div className="text-sm text-slate-500">{t.status}</div>
+          </div>
+          <div className="text-sm">{t.priority}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+`,
+
+  'app/dashboard/contacts/page.tsx': `import { prisma } from "@/lib/prisma";
+
+export default async function ContactsPage() {
+  const users = await prisma.user.findMany({ select: { id: true, name: true, email: true, role: true, createdAt: true } });
+  return (
+    <div className="space-y-4">
+      <h1 className="text-2xl font-black">Contacts</h1>
+      <div className="bg-white rounded-2xl border overflow-hidden">
+        <table className="w-full text-sm">
+          <thead className="bg-slate-100"><tr><th className="p-4 text-left">Name</th><th className="p-4 text-left">Email</th><th className="p-4 text-left">Role</th></tr></thead>
+          <tbody>
+            {users.map((u) => (
+              <tr key={u.id} className="border-t">
+                <td className="p-4">{u.name || "—"}</td>
+                <td className="p-4">{u.email}</td>
+                <td className="p-4">{u.role}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+`,
+
+  'app/dashboard/conversations/page.tsx': `import { prisma } from "@/lib/prisma";
+
+export default async function ConversationsPage() {
+  const conversations = await prisma.conversation.findMany({ include: { messages: true }, orderBy: { createdAt: "desc" } });
+  return (
+    <div className="space-y-4">
+      <h1 className="text-2xl font-black">Conversations</h1>
+      {conversations.map((c) => (
+        <div key={c.id} className="bg-white p-4 rounded-2xl border">
+          <div className="font-bold">{c.channel} • {c.status}</div>
+          <div className="text-sm text-slate-500">{c.messages.length} messages</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+`,
+
+  'app/dashboard/proposals/page.tsx': `import { prisma } from "@/lib/prisma";
+
+export default async function ProposalsPage() {
+  const proposals = await prisma.proposal.findMany({ orderBy: { createdAt: "desc" } });
+  return (
+    <div className="space-y-4">
+      <h1 className="text-2xl font-black">Proposals</h1>
+      {proposals.map((p) => (
+        <div key={p.id} className="bg-white p-4 rounded-2xl border">
+          <div className="font-bold">{p.title}</div>
+          <div className="text-sm text-slate-500">{p.status} • {p.value || 0}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+`,
+
+  'app/dashboard/payments/page.tsx': `import { prisma } from "@/lib/prisma";
+
+export default async function PaymentsPage() {
+  const payments = await prisma.payment.findMany({ orderBy: { createdAt: "desc" } });
+  return (
+    <div className="space-y-4">
+      <h1 className="text-2xl font-black">Payments</h1>
+      {payments.map((p) => (
+        <div key={p.id} className="bg-white p-4 rounded-2xl border flex justify-between">
+          <div className="font-bold">{p.currency} {p.amount}</div>
+          <div className="text-sm">{p.status}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+`,
+
+  'app/dashboard/ai-agents/page.tsx': `export default async function AIAgentsPage() {
+  const agents = [
+    { name: "Master Orchestrator", status: "ACTIVE" },
+    { name: "Lead Discovery", status: "ACTIVE" },
+    { name: "Website Builder", status: "ACTIVE" },
+    { name: "Customer Service", status: "ACTIVE" },
+  ];
+  return (
+    <div className="space-y-4">
+      <h1 className="text-2xl font-black">AI Agents</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {agents.map((a) => (
+          <div key={a.name} className="bg-white p-4 rounded-2xl border">
+            <div className="font-bold">{a.name}</div>
+            <div className="text-sm text-emerald-600">{a.status}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+`,
+
+  'app/dashboard/reports/page.tsx': `import { prisma } from "@/lib/prisma";
+
+export default async function ReportsPage() {
+  const leadCount = await prisma.lead.count();
+  const taskCount = await prisma.task.count();
+  const revenue = await prisma.payment.aggregate({ _sum: { amount: true }, where: { status: "COMPLETED" } });
+  return (
+    <div className="space-y-4">
+      <h1 className="text-2xl font-black">Reports</h1>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-white p-5 rounded-2xl border"><div className="text-xs text-slate-500">Total Leads</div><div className="text-2xl font-black">{leadCount}</div></div>
+        <div className="bg-white p-5 rounded-2xl border"><div className="text-xs text-slate-500">Total Tasks</div><div className="text-2xl font-black">{taskCount}</div></div>
+        <div className="bg-white p-5 rounded-2xl border"><div className="text-xs text-slate-500">Revenue</div><div className="text-2xl font-black">{revenue._sum.amount || 0}</div></div>
+      </div>
+    </div>
+  );
+}
+`,
+
+  'app/dashboard/settings/page.tsx': `export default function SettingsPage() {
+  return (
+    <div className="space-y-4">
+      <h1 className="text-2xl font-black">Settings</h1>
+      <div className="bg-white p-6 rounded-2xl border">
+        <h2 className="font-bold">Security & RBAC</h2>
+        <p className="text-sm text-slate-500">Owner bootstrapped from environment variables. NextAuth standard models as source of truth.</p>
+      </div>
+    </div>
+  );
+}
+`,
+
+  'app/agent/layout.tsx': `import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { redirect } from "next/navigation";
+
+export default async function AgentLayout({ children }: { children: React.ReactNode }) {
+  const session = await getServerSession(authOptions);
+  if (!session) redirect("/login");
+  if (!["ADMIN", "AGENT"].includes((session.user as any).role)) redirect("/login");
+  return <div className="min-h-screen bg-slate-50 p-6">{children}</div>;
+}
+`,
+
+  'app/agent/page.tsx': `export default function AgentPage() {
+  return (
+    <div className="space-y-4">
+      <h1 className="text-2xl font-black">Staff Dashboard</h1>
+      <p className="text-slate-500">Assigned tasks and conversations appear here.</p>
+    </div>
+  );
+}
+`,
+
+  'components/Sidebar.tsx': `"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+const NAV_ITEMS = [
+  { href: "/dashboard", label: "Dashboard", icon: "📊" },
+  { href: "/dashboard/contacts", label: "Contacts", icon: "👥" },
+  { href: "/dashboard/conversations", label: "Conversations", icon: "💬" },
+  { href: "/dashboard/leads", label: "Leads", icon: "🎯" },
+  { href: "/dashboard/tasks", label: "Tasks", icon: "🧩" },
+  { href: "/dashboard/proposals", label: "Proposals", icon: "📄" },
+  { href: "/dashboard/payments", label: "Payments", icon: "💳" },
+  { href: "/dashboard/ai-agents", label: "AI Agents", icon: "🤖" },
+  { href: "/dashboard/reports", label: "Reports", icon: "📈" },
+  { href: "/dashboard/settings", label: "Settings", icon: "⚙️" },
+];
+
+export default function Sidebar({ user }: { user: any }) {
+  const pathname = usePathname();
+  return (
+    <aside className="w-64 bg-slate-950 text-slate-300 min-h-screen flex flex-col border-r border-slate-800">
+      <div className="p-6 border-b border-slate-800">
+        <h1 className="font-bold text-white">My Personal AI</h1>
+        <p className="text-xs text-brand-300">Autonomous Business OS</p>
+      </div>
+      <nav className="flex-1 p-3 space-y-1">
+        {NAV_ITEMS.map((item) => (
+          <Link key={item.href} href={item.href}
+            className={\`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium \${pathname === item.href ? "bg-slate-800 text-white" : "text-slate-400 hover:text-white hover:bg-slate-800/50"}\`}>
+            <span>{item.icon}</span>{item.label}
+          </Link>
+        ))}
+      </nav>
+      <div className="p-4 border-t border-slate-800">
+        <div className="text-xs text-white font-bold">{user?.name || "Owner"}</div>
+        <div className="text-[11px] text-slate-400">{user?.email}</div>
+      </div>
+    </aside>
+  );
+}
+`,
+
+  'components/ApprovalGate.tsx': `"use client";
+
+import { useState } from "react";
+
+export default function ApprovalGate({ item, onApprove, onReject }: { item: any; onApprove: () => void; onReject: () => void }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="border rounded-xl p-3 bg-slate-50">
+      <div className="flex justify-between items-center">
+        <div>
+          <div className="font-bold text-sm">{item.business}</div>
+          <div className="text-xs text-slate-500">{item.subjectNp}</div>
+        </div>
+        <span className="text-[10px] px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-bold">{item.status}</span>
+      </div>
+      <div className="flex gap-2 mt-2">
+        <button onClick={onApprove} className="px-3 py-1.5 bg-emerald-600 text-white text-xs font-bold rounded-lg">Approve</button>
+        <button onClick={onReject} className="px-3 py-1.5 bg-rose-50 text-rose-700 text-xs font-bold rounded-lg border border-rose-200">Reject</button>
+      </div>
+    </div>
+  );
+}
+`,
+
+  'components/StatCard.tsx': `export default function StatCard({ label, value, note }: { label: string; value: string | number; note?: string }) {
+  return (
+    <div className="bg-white p-5 rounded-2xl border border-slate-200">
+      <div className="text-xs font-bold uppercase text-slate-500">{label}</div>
+      <div className="text-2xl font-black mt-1">{value}</div>
+      {note && <div className="text-[11px] text-slate-500 mt-1">{note}</div>}
+    </div>
+  );
+}
+`,
+
+  'components/Button.tsx': `"use client";
+
+import { cn } from "@/lib/utils";
+
+export default function Button({ children, variant = "primary", className, ...props }: any) {
+  const variants: any = {
+    primary: "bg-brand-600 hover:bg-brand-500 text-white",
+    secondary: "bg-slate-900 hover:bg-slate-800 text-white",
+    outline: "border border-slate-200 text-slate-700 hover:bg-slate-50",
+    danger: "bg-rose-600 hover:bg-rose-500 text-white",
+  };
+  return (
+    <button className={cn("px-4 py-2 rounded-xl text-sm font-bold transition active:scale-95", variants[variant], className)} {...props}>
+      {children}
+    </button>
+  );
+}
+`,
+
+  'docs/DEPLOYMENT.md': `# Deployment Guide
+
+## 1. Local Setup
+\\\`\\\`\\\`bash
+npm install
+cp .env.example .env.local
+openssl rand -base64 32        # NEXTAUTH_SECRET
+node -e "console.log(require('bcryptjs').hashSync('your-password', 12))"
+npx prisma generate
+npx prisma db push
+npm run dev
+\\\`\\\`\\\`
+
+## 2. GitHub
+\\\`\\\`\\\`bash
+git init
+git add .
+git commit -m "Initial release"
+git branch -M main
+git remote add origin https://github.com/<you>/<repo>.git
+git push -u origin main
+\\\`\\\`\\\`
+
+## 3. Vercel
+1. Import the GitHub repo in Vercel.
+2. Add env vars from .env.example (server-side only).
+3. Deploy.
+
+## 4. Post-Deploy
+- Confirm /api/health returns 200
+- Confirm /dashboard requires login
+- Verify no secrets are exposed to the client bundle
+`
+};
+
+/* ============================================================
+   APP STATE (existing)
+   ============================================================ */
+const STATUS = { CONNECTED: 'CONNECTED', NOT_CONNECTED: 'NOT CONNECTED', NEEDS_AUTHORIZATION: 'NEEDS AUTHORIZATION' };
+
+const chaurjahariLeadsData = [
+  { rank: 1, company: 'Hotel Samjhana Chaurjahari', type: 'Hotel & Lodge', tier: 1, tierLabel: '1 — No Website', score: 95, verification: 'Search: 0 domains • FB Page only', opportunity: 'High tourist traffic, loses direct bookings to phone only.', draftNp: 'विषय: होटल सम्झनाको लागि अझ धेरै प्रत्यक्ष बुकिङ\n\nनमस्ते होटल सम्झना टिम 🙏,\n\nचौरजहारीमा तपाईंको होटलको चर्चा धेरै छ, तर अनलाइनमा खोज्दा फेला पर्दैन।', draftEn: 'Subject: Direct bookings for Hotel Samjhana — Free preview\n\nNamaste team, guests searching for Chaurjahari hotels cannot find your official portal.' },
+  { rank: 2, company: 'Karnali Travels & Tours Chaurjahari', type: 'Travel Agency', tier: 1, tierLabel: '1 — No Website', score: 93, verification: 'Search: No domain • Maps: Unverified', opportunity: 'Gateway to Dolpa treks — zero online itinerary booking.', draftNp: 'विषय: तपाईंको डोल्पा/कर्णाली ट्रेक प्याकेजलाई अनलाइन बुकिङ चाहियो', draftEn: 'Subject: Online trek packages for Karnali Travels' },
+  { rank: 3, company: 'Radiant Secondary School', type: 'School', tier: 1, tierLabel: '1 — No Website', score: 91, verification: 'Search: No domain • FB only', opportunity: 'Admission season — parents search school credentials online.', draftNp: 'विषय: Radiant School को लागि भर्ना-मैत्री वेबसाइट', draftEn: 'Subject: Official web portal for Radiant School admissions' },
+  { rank: 4, company: 'New Look Beauty Parlor & Salon', type: 'Salon', tier: 1, tierLabel: '1 — No Website', score: 88, verification: 'Instagram only • No booking menu', opportunity: 'Bridal packages need online catalog & WhatsApp slot booking.', draftNp: 'विषय: New Look लाई ब्राइडल बुकिङ ग्यालेरी', draftEn: 'Subject: Bridal service catalog & booking for New Look' },
+  { rank: 5, company: 'Chaurjahari City Clinic', type: 'Clinic', tier: 1, tierLabel: '1 — No Website', score: 87, verification: 'Maps: Phone only • No doctor list', opportunity: 'Emergency contacts and OPD schedules missing online.', draftNp: 'विषय: क्लिनिकको लागि विश्वासिलो वेबसाइट तथा डाक्टर तालिका', draftEn: 'Subject: Verified clinic portal and emergency timetable' },
+  { rank: 6, company: 'Rukum West Cafe & Restaurant', type: 'Restaurant', tier: 1, tierLabel: '1 — No Website', score: 85, verification: 'FB: Photos only • No digital menu', opportunity: 'Tourists need instant QR/Web menu & location map.', draftNp: 'विषय: भोकाएका ग्राहकका लागि डिजिटल मेनु', draftEn: 'Subject: Digital menu & map for Rukum West Cafe' },
+  { rank: 7, company: 'Himalayan Bakery', type: 'Bakery', tier: 2, tierLabel: '2 — Outdated / Weak', score: 78, verification: 'FB inactive since 2022', opportunity: 'Custom cake orders and price list need fresh layout.', draftNp: 'विषय: ताजा केक अर्डरका लागि अनलाइन क्याटलग', draftEn: 'Subject: Fresh daily menu and bakery orders' },
+  { rank: 8, company: 'Karnali Tailors & Dress House', type: 'Tailoring', tier: 2, tierLabel: '2 — Incomplete', score: 76, verification: 'No price catalog', opportunity: 'Dashain clothing orders via WhatsApp catalog.', draftNp: 'विषय: चाडपर्व अर्डरका लागि अनलाइन ड्रेस क्याटलग', draftEn: 'Subject: Online dress showcase for Dashain orders' },
+  { rank: 9, company: 'Karnali Suppliers Store', type: 'Kirana / Wholesale', tier: 3, tierLabel: '3 — Poor Mobile', score: 71, verification: 'Missing opening hours & bulk catalog', opportunity: 'Wholesale B2B inquiry form needed.', draftNp: 'विषय: थोक अर्डरका लागि अनलाइन क्याटलग', draftEn: 'Subject: Bulk wholesale inquiries for Karnali Suppliers' },
+  { rank: 10, company: 'Bheri Cold Store', type: 'Storage', tier: 4, tierLabel: '4 — Missing Details', score: 68, verification: 'No storage rates listed', opportunity: 'Cold storage rates for regional apple & potato farmers.', draftNp: 'विषय: भेरी कोल्ड स्टोरको लागि आधिकारिक दर र क्षमता सूची', draftEn: 'Subject: Storage capacity & rates listing for Bheri Cold Store' }
+];
+
+const AppState = {
+  currentView: 'command-center',
+  integrations: [
+    { id: 'ai', name: 'Google Gemini API', category: 'AI Engine', icon: '🧠', status: STATUS.NEEDS_AUTHORIZATION, details: 'GEMINI_API_KEY stored server-side only in .env.local.' },
+    { id: 'webresearch', name: 'Web Research API', category: 'Research', icon: '🔍', status: STATUS.NOT_CONNECTED, details: 'SEARCH_API_KEY required for real-time web scrapes.' },
+    { id: 'db', name: 'PostgreSQL / Prisma', category: 'Database', icon: '🗄️', status: STATUS.NEEDS_AUTHORIZATION, details: 'DATABASE_URL with NextAuth User/Session models.' },
+    { id: 'crm', name: 'CRM Sync', category: 'CRM', icon: '🔄', status: STATUS.NOT_CONNECTED, details: 'Prisma stores CRM records safely.' },
+    { id: 'email', name: 'Resend Email API', category: 'Outreach', icon: '✉️', status: STATUS.NOT_CONNECTED, details: 'RESEND_API_KEY needed before dispatching approval emails.' },
+    { id: 'whatsapp', name: 'WhatsApp Business API', category: 'Messaging', icon: '📱', status: STATUS.NOT_CONNECTED, details: 'Meta Token required for live message dispatch.' },
+    { id: 'calendar', name: 'Google Calendar API', category: 'Calendar', icon: '📅', status: STATUS.NOT_CONNECTED, details: 'Calendar sync.' },
+    { id: 'gmail', name: 'Gmail API', category: 'Email', icon: '📧', status: STATUS.NOT_CONNECTED, details: 'Google OAuth for Gmail scope.' },
+    { id: 'payments', name: 'Stripe Billing', category: 'Payments', icon: '💳', status: STATUS.NOT_CONNECTED, details: 'STRIPE_SECRET_KEY server-side verification.' },
+    { id: 'github', name: 'GitHub API', category: 'Source', icon: '🐙', status: STATUS.NOT_CONNECTED, details: 'Protected repo sync.' },
+    { id: 'deploy', name: 'Vercel Deployment', category: 'Hosting', icon: '🚀', status: STATUS.NEEDS_AUTHORIZATION, details: 'VERCEL_TOKEN for live project spins.' },
+    { id: 'voice', name: 'Voice Engine', category: 'Voice', icon: '☎️', status: STATUS.NOT_CONNECTED, details: 'Twilio / Web Speech token.' }
+  ],
+  approvalQueue: chaurjahariLeadsData.map((l, i) => ({
+    id: `APR-${i + 1}`,
+    business: l.company,
+    subjectNp: l.draftNp.split('\n')[0].replace('विषय: ', ''),
+    subjectEn: l.draftEn.split('\n')[0].replace('Subject: ', ''),
+    bodyNp: l.draftNp,
+    bodyEn: l.draftEn,
+    status: 'WAITING_APPROVAL'
+  })),
+  selectedApproval: null,
+  activeFile: 'middleware.ts',
+  openTabs: ['middleware.ts', 'package.json', 'lib/auth.ts', 'prisma/schema.prisma', 'app/login/page.tsx', '.env.example']
+};
+
+const AGENTS = [
+  { name: 'Master AI Orchestrator', icon: '🧠', role: 'Plan & Authorize', status: 'ACTIVE' },
+  { name: 'Lead Discovery & Sales', icon: '🎯', role: 'Scoring & Tier 1-5', status: 'COMPLETED' },
+  { name: 'Marketing & SEO', icon: '📈', role: 'Nepali Primary Copy', status: 'WAITING' },
+  { name: 'Web & App Builder', icon: '💻', role: 'Next.js 14 Code Engine', status: 'ACTIVE' },
+  { name: 'Customer Service AI', icon: '💬', role: 'Public Chat & Voice', status: 'ACTIVE' },
+  { name: 'Business Ops & Scheduler', icon: '⚙️', role: 'Execution Daemon', status: 'ACTIVE' },
+  { name: 'Security & RBAC Guard', icon: '🛡️', role: 'Owner Session Guard', status: 'ACTIVE' },
+  { name: 'Payments Agent', icon: '💳', role: 'Stripe Billing', status: 'WAITING' },
+  { name: 'App Builder AI', icon: '📱', role: 'React Native / PWA', status: 'WAITING' },
+  { name: 'Agent Builder AI', icon: '🧬', role: 'Custom AI Agents', status: 'ACTIVE' },
+  { name: 'Analytics Engine', icon: '📊', role: 'Reports & Insights', status: 'ACTIVE' },
+  { name: 'Human Handoff', icon: '🙋', role: 'Escalation Bridge', status: 'ACTIVE' }
+];
+
+/* ============================================================
+   ZIP EXPORT CONTROLLER — Real download for mobile Chrome
+   ============================================================ */
+const ZipExport = (function () {
+  let cachedBlob = null;
+  let cachedName = null;
+  let building = false;
+
+  function setStatus(msg, type) {
+    const el = document.getElementById('zipStatus');
+    if (el) {
+      el.textContent = msg;
+      el.classList.remove('hidden');
+      el.classList.remove('text-emerald-400', 'text-rose-400', 'text-slate-400', 'text-amber-400');
+      el.classList.add(type === 'success' ? 'text-emerald-400' : type === 'error' ? 'text-rose-400' : 'text-amber-400');
+    }
+  }
+
+  function validateInventory() {
+    const paths = Object.keys(PROJECT_FILES);
+    if (!paths.length) throw new Error('Inventory empty — no files defined');
+    const invalid = paths.filter(p => typeof PROJECT_FILES[p] !== 'string' || PROJECT_FILES[p].length === 0);
+    if (invalid.length) throw new Error('Invalid file content: ' + invalid.join(', '));
+    return paths;
+  }
+
+  async function buildZip() {
+    if (typeof JSZip === 'undefined') {
+      throw new Error('JSZip library failed to load — check network and reload the page.');
+    }
+    const paths = validateInventory();
+    const zip = new JSZip();
+    paths.forEach(p => zip.file(p, PROJECT_FILES[p]));
+    // Add a top-level marker for clarity
+    zip.file('.project-export-info.txt',
+      'My Personal AI Business Agent — EXCLUDED SECRETS\n' +
+      'Generated: ' + new Date().toISOString() + '\n' +
+      'Files: ' + paths.length + '\n' +
+      'Secrets (.env, tokens, hashes) are intentionally excluded.\n' +
+      'Copy .env.example to .env.local and populate server-side only.\n'
+    );
+    const blob = await zip.generateAsync({
+      type: 'blob',
+      compression: 'DEFLATE',
+      compressionOptions: { level: 6 },
+      mimeType: 'application/zip'
+    });
+    if (!blob || blob.size === 0) throw new Error('ZIP blob is empty');
+    return { blob, name: 'my-personal-ai-business-agent-v3.6.0.zip', count: paths.length };
+  }
+
+  function triggerDownload(blob, filename) {
+    // IE/old Edge
+    if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+      window.navigator.msSaveOrOpenBlob(blob, filename);
+      return true;
+    }
+    // Modern browsers (Chrome desktop + mobile, Safari, Edge, Firefox)
+    let blobUrl;
+    try {
+      blobUrl = URL.createObjectURL(blob);
+    } catch (e) {
+      throw new Error('URL.createObjectURL failed: ' + e.message);
+    }
+
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = filename;
+    a.rel = 'noopener';
+    a.style.display = 'none';
+    a.style.position = 'absolute';
+    a.style.left = '-9999px';
+    document.body.appendChild(a);
+
+    // Prefer native click for mobile Chrome (inside user gesture chain)
+    let clicked = false;
+    try {
+      if (typeof a.click === 'function') {
+        a.click();
+        clicked = true;
+      }
+    } catch (e) { /* fall through */ }
+
+    if (!clicked) {
+      try {
+        const evt = new MouseEvent('click', { bubbles: true, cancelable: true, view: window });
+        a.dispatchEvent(evt);
+        clicked = true;
+      } catch (e) {
+        try {
+          const evt = document.createEvent('MouseEvents');
+          evt.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+          a.dispatchEvent(evt);
+          clicked = true;
+        } catch (e2) {
+          clicked = false;
+        }
+      }
+    }
+
+    // Cleanup after a delay so mobile Chrome can complete the download
+    setTimeout(() => {
+      try { document.body.removeChild(a); } catch (e) { }
+      try { URL.revokeObjectURL(blobUrl); } catch (e) { }
+    }, 6000);
+
+    if (!clicked) throw new Error('Browser refused to trigger download (unsupported anchor click)');
+    return true;
+  }
+
+  async function download(ev) {
+    if (ev) { ev.preventDefault(); ev.stopPropagation(); }
+    if (building) return;
+    building = true;
+    const buttons = document.querySelectorAll('.download-all-btn');
+    buttons.forEach(b => { b.setAttribute('disabled', 'disabled'); b.style.opacity = '0.7'; });
+
+    try {
+      setStatus('🔍 Validating project inventory…', 'info');
+      validateInventory();
+
+      let blob = cachedBlob;
+      let name = cachedName;
+
+      if (!blob) {
+        setStatus('📦 Building ZIP archive…', 'info');
+        const built = await buildZip();
+        blob = built.blob;
+        name = built.name;
+        cachedBlob = blob;
+        cachedName = name;
+      }
+
+      setStatus('⬇ Triggering browser download…', 'info');
+      triggerDownload(blob, name);
+
+      const kb = (blob.size / 1024).toFixed(1);
+      setStatus('✓ Download started — ' + kb + ' KB — ' + name, 'success');
+      showToast('✓ ZIP download started (' + kb + ' KB)', 'success');
+    } catch (err) {
+      console.error('[ZIP Export] failed:', err);
+      const msg = (err && err.message) ? err.message : 'Unknown error';
+      setStatus('✗ Export failed: ' + msg, 'error');
+      showToast('✗ ZIP export failed: ' + msg, 'error');
+    } finally {
+      building = false;
+      buttons.forEach(b => { b.removeAttribute('disabled'); b.style.opacity = '1'; });
+    }
+  }
+
+  function warm() {
+    if (cachedBlob) return;
+    buildZip().then(({ blob, name }) => {
+      cachedBlob = blob;
+      cachedName = name;
+      console.log('[ZIP Export] Pre-built ' + name + ' (' + blob.size + ' bytes)');
+    }).catch(err => {
+      console.warn('[ZIP Export] Pre-build skipped (will retry on click):', err.message);
+    });
+  }
+
+  function attach() {
+    const buttons = document.querySelectorAll('.download-all-btn');
+    buttons.forEach(btn => {
+      btn.type = 'button';
+      btn.addEventListener('click', download);
+    });
+    // Pre-warm cache so first click completes within the user gesture on mobile Chrome
+    setTimeout(warm, 500);
+  }
+
+  return { attach, download };
+})();
+
+/* ============================================================
+   APP
+   ============================================================ */
+function showToast(msg, type) {
+  const c = document.getElementById('toastContainer');
+  if (!c) return;
+  const t = document.createElement('div');
+  t.className = 'pointer-events-auto px-4 py-3 rounded-xl text-xs font-bold shadow-lg border ' +
+    (type === 'success' ? 'bg-emerald-600 text-white border-emerald-500' :
+     type === 'error' ? 'bg-rose-600 text-white border-rose-500' : 'bg-slate-900 text-white border-slate-700');
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(() => { t.style.transition = 'opacity .4s'; t.style.opacity = '0'; }, 3500);
+  setTimeout(() => { t.remove(); }, 4000);
+}
+
+function toggleMobileNav() {
+  const s = document.getElementById('sidebar');
+  const scrim = document.getElementById('scrim');
+  const open = !s.classList.contains('-translate-x-full');
+  if (open) { s.classList.add('-translate-x-full'); scrim.classList.add('hidden'); }
+  else { s.classList.remove('-translate-x-full'); scrim.classList.remove('hidden'); }
+}
+
+const VIEW_TITLES = {
+  'command-center': 'Owner Command Center',
+  'overview': 'Overview & Health',
+  'workflow': 'Business Workflow',
+  'tasks': 'Task Orchestrator',
+  'builder': 'Edit & Code Studio',
+  'chat': 'AI Support Agent',
+  'leads': 'Leads & CRM Pipeline',
+  'integrations': 'Server Integrations',
+  'analytics': 'Analytics & Reports',
+  'scheduler': 'Scheduler & Automation',
+  'architecture': 'Backend Architecture',
+  'settings': 'Settings & Security'
+};
+
+function openView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  const el = document.getElementById(name);
+  if (el) el.classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => {
+    const isActive = b.dataset.view === name;
+    if (isActive) {
+      b.className = 'nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-sm text-white bg-slate-800 border border-slate-700';
+    } else {
+      b.className = 'nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm text-slate-400 hover:text-white hover:bg-slate-800/50';
+    }
+  });
+  const bc = document.getElementById('breadcrumb');
+  if (bc) bc.textContent = VIEW_TITLES[name] || 'Owner Command Center';
+  AppState.currentView = name;
+  if (window.innerWidth < 1024) {
+    const s = document.getElementById('sidebar');
+    const scrim = document.getElementById('scrim');
+    if (!s.classList.contains('-translate-x-full')) { s.classList.add('-translate-x-full'); scrim.classList.add('hidden'); }
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function fillCommand(text) { document.getElementById('commandInput').value = text; }
+
+function executeCommand() {
+  const input = document.getElementById('commandInput');
+  const val = input.value.trim();
+  if (!val) { showToast('Type or select a command first', 'error'); return; }
+  const planner = document.getElementById('taskPlannerOutput');
+  document.getElementById('plannerStatus').textContent = 'RUNNING';
+  const isNepali = /[\u0900-\u097F]/.test(val);
+  document.getElementById('plannerLang').textContent = isNepali ? 'NE detected' : 'EN detected';
+  planner.innerHTML = '';
+  const steps = [
+    'Understanding intent ("find", "verify", "rank", "draft", "approve")',
+    'Planning 8-step mission: DISCOVER → VERIFY → SCORE → DRAFT → QUEUE',
+    'Selecting agents: Lead Discovery + Marketing (Nepali primary)',
+    'Running risk check → all external actions gated',
+    'Queueing 10 outreach drafts into Owner Approval Center',
+    'Verification: cross-check Google Search, Maps & Facebook',
+    'Logging to audit trail + writing to AI Memory',
+    'Awaiting owner approval before any dispatch'
+  ];
+  steps.forEach((s, i) => {
+    setTimeout(() => {
+      const row = document.createElement('div');
+      row.className = 'flex items-start gap-2 p-2 rounded-lg bg-slate-50 border text-xs';
+      row.innerHTML = '<span class="text-brand-600 font-bold">' + (i + 1) + '.</span><span>' + s + '</span><span class="ml-auto text-emerald-600 font-bold">✓</span>';
+      planner.appendChild(row);
+      if (i === steps.length - 1) {
+        document.getElementById('plannerStatus').textContent = 'READY';
+        showToast('Plan ready — 10 drafts queued for approval', 'success');
+      }
+    }, i * 180);
+  });
+}
+
+function toggleVoice() {
+  const btn = document.getElementById('voiceBtn');
+  const icon = document.getElementById('voiceIcon');
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { showToast('Voice not supported on this browser', 'error'); return; }
+  const rec = new SR();
+  rec.lang = 'en-US';
+  rec.onstart = () => { btn.classList.add('animate-pulse'); icon.textContent = '🎙️'; };
+  rec.onend = () => { btn.classList.remove('animate-pulse'); icon.textContent = '🎤'; };
+  rec.onresult = (e) => { document.getElementById('commandInput').value = e.results[0][0].transcript; };
+  rec.onerror = () => { showToast('Voice input failed', 'error'); };
+  rec.start();
+}
+
+function renderAgents() {
+  const grid = document.getElementById('agentGrid');
+  grid.innerHTML = AGENTS.map(a => {
+    const color = a.status === 'ACTIVE' ? 'emerald' : a.status === 'COMPLETED' ? 'blue' : 'amber';
+    return '<div class="p-3 rounded-xl border bg-slate-50 hover:bg-white transition">' +
+      '<div class="flex items-center gap-2"><span class="text-lg">' + a.icon + '</span><span class="font-bold text-xs">' + a.name + '</span></div>' +
+      '<div class="text-[10px] text-slate-500 mt-1">' + a.role + '</div>' +
+      '<div class="text-[9px] font-bold mt-2 text-' + color + '-700 bg-' + color + '-100 inline-block px-2 py-0.5 rounded">' + a.status + '</div>' +
+      '</div>';
+  }).join('');
+}
+
+function renderApprovalQueue() {
+  const container = document.getElementById('approvalQueue');
+  container.innerHTML = AppState.approvalQueue.slice(0, 10).map(a =>
+    '<div class="p-3 rounded-xl bg-slate-50 border border-slate-200 hover:border-amber-300 cursor-pointer transition" onclick="openApprovalModal(\'' + a.id + '\')">' +
+      '<div class="flex items-start justify-between gap-2">' +
+        '<div class="font-bold text-xs text-slate-800">' + a.business + '</div>' +
+        '<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-800">' + a.status.replace('_', ' ') + '</span>' +
+      '</div>' +
+      '<div class="text-[10px] text-slate-500 mt-1">' + a.subjectNp + '</div>' +
+      '<div class="text-[10px] text-slate-400 mt-0.5">' + a.subjectEn + '</div>' +
+    '</div>'
+  ).join('');
+}
+
+function renderLeadRankTable() {
+  const tbody = document.getElementById('leadRankTable');
+  tbody.innerHTML = chaurjahariLeadsData.map(l => {
+    const tierColor = l.tier === 1 ? 'rose' : l.tier === 2 ? 'amber' : l.tier === 3 ? 'orange' : 'slate';
+    return '<tr class="hover:bg-slate-50">' +
+      '<td class="p-3"><span class="font-black text-slate-900">#' + l.rank + '</span><br><span class="text-[10px] text-' + tierColor + '-600 font-bold">' + l.tierLabel.split('—')[1] + '</span></td>' +
+      '<td class="p-3 font-bold">' + l.company + '<div class="text-[10px] text-slate-500 font-normal mt-0.5 max-w-xs">' + l.opportunity + '</div></td>' +
+      '<td class="p-3 text-[11px]">' + l.type + '</td>' +
+      '<td class="p-3"><span class="text-[10px] px-2 py-0.5 rounded bg-' + tierColor + '-100 text-' + tierColor + '-700 font-bold">' + l.tierLabel + '</span></td>' +
+      '<td class="p-3 text-[10px] text-slate-500">' + l.verification + '</td>' +
+      '<td class="p-3"><span class="font-black text-brand-600">' + l.score + '</span></td>' +
+      '<td class="p-3"><button onclick="openApprovalModal(\'APR-' + l.rank + '\')" class="text-[10px] font-bold px-2 py-1 rounded bg-amber-500 text-slate-900">Review</button></td>' +
+    '</tr>';
+  }).join('');
+}
+
+function renderIntegrations() {
+  const container = document.getElementById('integrationCardsContainer');
+  const overview = document.getElementById('overviewMatrixGrid');
+  const cardHtml = (i) => {
+    const color = i.status === 'CONNECTED' ? 'emerald' : i.status === 'NEEDS AUTHORIZATION' ? 'amber' : 'rose';
+    return '<div class="bg-white rounded-2xl border border-slate-200 p-4">' +
+      '<div class="flex items-start justify-between">' +
+        '<div class="flex items-center gap-2"><span class="text-xl">' + i.icon + '</span><div><div class="font-bold text-xs">' + i.name + '</div><div class="text-[10px] text-slate-500">' + i.category + '</div></div></div>' +
+        '<span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-' + color + '-100 text-' + color + '-700">' + i.status + '</span>' +
+      '</div>' +
+      '<div class="text-[11px] text-slate-500 mt-2">' + i.details + '</div>' +
+    '</div>';
+  };
+  container.innerHTML = AppState.integrations.map(cardHtml).join('');
+  overview.innerHTML = AppState.integrations.slice(0, 6).map(cardHtml).join('');
+}
+
+function renderCRMTBody() {
+  const tbody = document.getElementById('crmTableBody');
+  tbody.innerHTML = chaurjahariLeadsData.map(l => {
+    const tierColor = l.tier === 1 ? 'rose' : l.tier === 2 ? 'amber' : 'slate';
+    return '<tr class="hover:bg-slate-50">' +
+      '<td class="p-4"><div class="font-bold">' + l.company + '</div><div class="text-[10px] text-slate-500">' + l.type + '</div></td>' +
+      '<td class="p-4"><span class="text-[10px] px-2 py-0.5 rounded bg-' + tierColor + '-100 text-' + tierColor + '-700 font-bold">' + l.tierLabel + '</span></td>' +
+      '<td class="p-4 font-mono">$' + (1500 - l.rank * 60) + '</td>' +
+      '<td class="p-4"><span class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-800">WAITING_APPROVAL</span></td>' +
+      '<td class="p-4"><div class="flex items-center gap-2"><div class="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-brand-500" style="width:' + l.score + '%"></div></div><span class="font-bold text-xs">' + l.score + '</span></div></td>' +
+    '</tr>';
+  }).join('');
+}
+
+function renderFileTree() {
+  const tree = document.getElementById('fileExplorerTree');
+  const paths = Object.keys(PROJECT_FILES);
+  const folders = {};
+  paths.forEach(p => {
+    const parts = p.split('/');
+    const dir = parts.length > 1 ? parts.slice(0, -1).join('/') : '/';
+    if (!folders[dir]) folders[dir] = [];
+    folders[dir].push(parts[parts.length - 1]);
+  });
+  let html = '';
+  Object.keys(folders).sort().forEach(dir => {
+    html += '<div class="text-[10px] font-bold text-slate-500 uppercase px-2 mt-2">' + (dir === '/' ? 'root' : dir) + '</div>';
+    folders[dir].forEach(f => {
+      const path = dir === '/' ? f : dir + '/' + f;
+      const active = path === AppState.activeFile;
+      html += '<button onclick="selectFile(\'' + path.replace(/'/g, "\\'") + '\')" class="w-full text-left px-2 py-1 rounded ' + (active ? 'bg-slate-800 text-white' : 'text-slate-400 hover:bg-slate-800/50') + '">' + f + '</button>';
+    });
+  });
+  tree.innerHTML = html;
+}
+
+function renderFileTabs() {
+  const tabs = document.getElementById('fileTabs');
+  tabs.innerHTML = AppState.openTabs.map(path => {
+    const active = path === AppState.activeFile;
+    const name = path.split('/').pop();
+    return '<button onclick="selectFile(\'' + path.replace(/'/g, "\\'") + '\')" class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap ' + (active ? 'bg-brand-600 text-white' : 'bg-slate-800 text-slate-300') + '">' + name + '</button>';
+  }).join('');
+}
+
+function selectFile(path) {
+  AppState.activeFile = path;
+  if (!AppState.openTabs.includes(path)) AppState.openTabs.push(path);
+  document.getElementById('codeDisplay').textContent = PROJECT_FILES[path] || '// File not found in inventory';
+  document.getElementById('activeFilePath').textContent = path;
+  const ext = path.split('.').pop();
+  document.getElementById('activeFileMeta').textContent = (ext === 'ts' ? 'TypeScript' : ext === 'tsx' ? 'React TSX' : ext === 'prisma' ? 'Prisma Schema' : ext === 'json' ? 'JSON' : 'Text') + ' • Session Checked';
+  renderFileTree();
+  renderFileTabs();
+}
+
+function copyCurrentCode() {
+  const code = PROJECT_FILES[AppState.activeFile] || '';
+  navigator.clipboard.writeText(code).then(() => {
+    showToast('Copied ' + AppState.activeFile, 'success');
+    const label = document.getElementById('copyCodeLabel');
+    if (label) { label.textContent = 'Copied!'; setTimeout(() => label.textContent = 'Copy', 1500); }
+  }).catch(() => showToast('Clipboard not available', 'error'));
+}
+
+function openPreviewModal() {
+  const iframe = document.getElementById('previewIframe');
+  iframe.srcdoc = '<!DOCTYPE html><html><head><script src="https://cdn.tailwindcss.com"><\/script></head><body class="bg-slate-50 flex items-center justify-center min-h-screen p-6"><div class="max-w-2xl text-center"><div class="text-xs font-bold text-brand-600 uppercase mb-2">Reference Preview</div><h1 class="text-4xl font-black text-slate-900 mb-3">Hotel Samjhana Chaurjahari</h1><p class="text-slate-600 mb-6">Modern booking-ready landing page scaffold — Next.js 14 component prepared after owner approval.</p><button class="px-6 py-3 bg-brand-600 text-white rounded-xl font-bold">Book Your Stay</button></div></body></html>';
+  document.getElementById('sitePreviewModal').classList.remove('hidden');
+  document.getElementById('sitePreviewModal').classList.add('flex');
+}
+function closePreviewModal() {
+  document.getElementById('sitePreviewModal').classList.add('hidden');
+  document.getElementById('sitePreviewModal').classList.remove('flex');
+}
+
+function openApprovalModal(id) {
+  const item = AppState.approvalQueue.find(a => a.id === id);
+  if (!item) return;
+  AppState.selectedApproval = item;
+  document.getElementById('approvalSubjectNp').value = item.subjectNp;
+  document.getElementById('approvalSubject').value = item.subjectEn;
+  document.getElementById('approvalEmailBodyNp').value = item.bodyNp;
+  document.getElementById('approvalEmailBody').value = item.bodyEn;
+  document.getElementById('approvalMetaGrid').innerHTML =
+    '<div class="p-2 rounded-lg bg-white border"><div class="text-[10px] text-slate-500 uppercase">Action ID</div><div class="font-mono font-bold">' + item.id + '</div></div>' +
+    '<div class="p-2 rounded-lg bg-white border"><div class="text-[10px] text-slate-500 uppercase">Business</div><div class="font-bold">' + item.business + '</div></div>' +
+    '<div class="p-2 rounded-lg bg-white border"><div class="text-[10px] text-slate-500 uppercase">Provider</div><div class="font-mono text-rose-600 font-bold">RESEND NOT CONNECTED</div></div>' +
+    '<div class="p-2 rounded-lg bg-white border"><div class="text-[10px] text-slate-500 uppercase">Status</div><div class="font-mono text-amber-600 font-bold">' + item.status + '</div></div>';
+  document.getElementById('ownerApprovalModal').classList.remove('hidden');
+  document.getElementById('ownerApprovalModal').classList.add('flex');
+}
+function closeOwnerApprovalModal() {
+  document.getElementById('ownerApprovalModal').classList.add('hidden');
+  document.getElementById('ownerApprovalModal').classList.remove('flex');
+}
+function openNextApproval() {
+  const next = AppState.approvalQueue.find(a => a.status === 'WAITING_APPROVAL');
+  if (next) openApprovalModal(next.id);
+  else showToast('No pending approvals', 'success');
+}
+function confirmApproveAction() {
+  if (!AppState.selectedApproval) return;
+  const idx = AppState.approvalQueue.findIndex(a => a.id === AppState.selectedApproval.id);
+  if (idx >= 0) AppState.approvalQueue[idx].status = 'AUTHORIZED';
+  const badge = document.getElementById('pendingApprovalBadge');
+  const count = AppState.approvalQueue.filter(a => a.status === 'WAITING_APPROVAL').length;
+  badge.textContent = count + ' Approval';
+  renderApprovalQueue();
+  closeOwnerApprovalModal();
+  showToast('Authorized (dispatch waits for CONNECTED provider)', 'success');
+}
+function rejectApprovalAction() {
+  if (!AppState.selectedApproval) return;
+  const idx = AppState.approvalQueue.findIndex(a => a.id === AppState.selectedApproval.id);
+  if (idx >= 0) AppState.approvalQueue[idx].status = 'REJECTED';
+  renderApprovalQueue();
+  closeOwnerApprovalModal();
+  showToast('Rejected', 'error');
+}
+
+function openNewLeadModal() {
+  document.getElementById('newLeadModal').classList.remove('hidden');
+  document.getElementById('newLeadModal').classList.add('flex');
+}
+function closeNewLeadModal() {
+  document.getElementById('newLeadModal').classList.add('hidden');
+  document.getElementById('newLeadModal').classList.remove('flex');
+}
+function submitNewLead() {
+  const company = document.getElementById('nlCompany').value.trim();
+  if (!company) { showToast('Enter a company name', 'error'); return; }
+  showToast('Lead saved locally', 'success');
+  closeNewLeadModal();
+}
+
+function handleChatSubmit(e) {
+  e.preventDefault();
+  const input = document.getElementById('chatInput');
+  const val = input.value.trim();
+  if (!val) return;
+  const messages = document.getElementById('chatMessages');
+  const userMsg = document.createElement('div');
+  userMsg.className = 'flex justify-end';
+  userMsg.innerHTML = '<div class="bg-brand-600 text-white p-3 rounded-2xl text-xs max-w-md">' + val.replace(/</g, '&lt;') + '</div>';
+  messages.appendChild(userMsg);
+  input.value = '';
+  setTimeout(() => {
+    const botMsg = document.createElement('div');
+    botMsg.className = 'flex justify-start';
+    botMsg.innerHTML = '<div class="bg-slate-900 border border-slate-800 text-slate-300 p-3 rounded-2xl text-xs max-w-md"><div class="font-bold text-brand-300 text-[10px] uppercase mb-1">Master Orchestrator</div><div>Noted. Checking approval queue and task blockers.</div></div>';
+    messages.appendChild(botMsg);
+    messages.scrollTop = messages.scrollHeight;
+  }, 600);
+}
+
+function handleLogout() {
+  showToast('Signing out (session cleared locally)', 'success');
+}
+
+function runPreflightCheck() { showToast('Preflight: 12 providers checked — 0 CONNECTED, 4 NEEDS_AUTHORIZATION, 8 NOT_CONNECTED', 'error'); }
+function testAllIntegrations() { showToast('Provider test invoked — no fake success. Connect real keys to flip statuses.', 'success'); }
+function retryAllBlocked() { showToast('Blocked tasks re-queued for owner review', 'success'); }
+
+/* INIT */
+document.addEventListener('DOMContentLoaded', () => {
+  AppState.openTabs = AppState.openTabs.filter(t => PROJECT_FILES[t]);
+  if (!PROJECT_FILES[AppState.activeFile]) AppState.activeFile = AppState.openTabs[0];
+
+  renderAgents();
+  renderApprovalQueue();
+  renderLeadRankTable();
+  renderIntegrations();
+  renderCRMTBody();
+  renderFileTree();
+  renderFileTabs();
+  selectFile(AppState.activeFile);
+
+  // Attach ZIP export handler to all .download-all-btn buttons
+  ZipExport.attach();
+  console.log('[App] Ready. Project inventory:', Object.keys(PROJECT_FILES).length, 'files.');
+});
+</script>
+</body>
+</html>

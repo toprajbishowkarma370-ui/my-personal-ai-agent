@@ -1,86 +1,78 @@
-import { NextResponse } from "next/server";
-import { getAuthSession } from "@/lib/auth";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+export default async function handler(req, res) {
+if (req.method !== "POST") {
+return res.status(405).json({
+error: "Method not allowed"
+});
+}
 
-export const runtime = "nodejs";
-
-export async function POST(req: Request) {
 try {
-const session = await getAuthSession();
+const message = req.body?.message;
 
-if (!session || (session.user as any)?.role !== "ADMIN") {
-  return NextResponse.json(
-    { error: "Unauthorized: Owner session required" },
-    { status: 401 }
-  );
+if (typeof message !== "string" || !message.trim()) {
+  return res.status(400).json({
+    error: "A valid message is required"
+  });
 }
 
 const apiKey = process.env.GEMINI_API_KEY;
 
 if (!apiKey) {
-  return NextResponse.json(
-    { error: "GEMINI_API_KEY is missing in server environment" },
-    { status: 500 }
-  );
+  return res.status(500).json({
+    error: "GEMINI_API_KEY is missing in Vercel Environment Variables"
+  });
 }
 
-let body: unknown;
+const response = await fetch(
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-goog-api-key": apiKey
+    },
+    body: JSON.stringify({
+      systemInstruction: {
+        parts: [{
+          text: "You are a helpful Personal AI Business Agent. Support English, Nepali, and Roman Nepali. Help with business planning, leads, tasks, and website projects. Never claim you performed real actions unless they were actually completed. Ask for owner approval before external actions."
+        }]
+      },
+      contents: [{
+        role: "user",
+        parts: [{ text: message.trim() }]
+      }]
+    })
+  }
+);
 
-try {
-  body = await req.json();
-} catch {
-  return NextResponse.json(
-    { error: "Invalid JSON request body" },
-    { status: 400 }
-  );
+const data = await response.json();
+
+if (!response.ok) {
+  console.error("Gemini API error:", data?.error?.message);
+
+  return res.status(502).json({
+    error: data?.error?.message || "Gemini request failed"
+  });
 }
 
-const message =
-  typeof body === "object" &&
-  body !== null &&
-  "message" in body &&
-  typeof (body as { message?: unknown }).message === "string"
-    ? (body as { message: string }).message.trim()
-    : "";
-
-if (!message) {
-  return NextResponse.json(
-    { error: 'Message must be a non-empty string' },
-    { status: 400 }
-  );
-}
-
-const genAI = new GoogleGenerativeAI(apiKey);
-const model = genAI.getGenerativeModel({
-  model: "gemini-1.5-flash",
-});
-
-const result = await model.generateContent(message);
-const reply = result.response.text().trim();
+const reply = (data?.candidates?.[0]?.content?.parts || [])
+  .map(part => part.text || "")
+  .join("")
+  .trim();
 
 if (!reply) {
-  return NextResponse.json(
-    { error: "Gemini returned an empty response" },
-    { status: 502 }
-  );
+  return res.status(502).json({
+    error: "Gemini returned an empty response"
+  });
 }
 
-return NextResponse.json({ reply });
+return res.status(200).json({ reply });
 
-} catch (error: unknown) {
-console.error("AI command error:", error);
+} catch (error) {
+console.error("Chat API error:", error);
 
-return NextResponse.json(
-  { error: "AI request failed. Check server configuration and logs." },
-  { status: 500 }
-);
+return res.status(500).json({
+  error: "Server error while processing your message"
+});
 
 }
 }
-
-export async function GET() {
-return NextResponse.json(
-{ error: "Method not allowed" },
-{ status: 405 }
-);
-  }

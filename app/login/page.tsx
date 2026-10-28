@@ -17,10 +17,18 @@ function LoginContent() {
     }
   }, [status, session, router]);
 
-  const handleGoogleSignIn = () => {
+  const handleGoogleSignIn = async () => {
     if (isSubmitting) return;
     setIsSubmitting(true);
-    signIn("google", { callbackUrl: "/dashboard" });
+    try {
+      const res = await signIn("google", { callbackUrl: "/dashboard", redirect: true }, { prompt: "select_account" });
+      if (res && res.error) {
+        setIsSubmitting(false);
+      }
+    } catch (err) {
+      console.error("Google sign in exception:", err);
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -53,7 +61,7 @@ function LoginContent() {
             <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.19C.43 8.1 0 9.8 0 12s.43 3.9 1.19 5.42l4.09-3.15z"/>
             <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.24 0 3.17 2.64 1.19 6.58l4.09 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
           </svg>
-          {isSubmitting ? "Connecting to Google..." : "Sign in with Google (Owner)"}
+          {isSubmitting ? "Connecting to Google..." : "Continue with Google (Owner)"}
         </button>
 
         <p style={{ marginTop: "24px", color: "#68738a", fontSize: "12px" }}>

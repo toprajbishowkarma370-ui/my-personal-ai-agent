@@ -17,18 +17,10 @@ function LoginContent() {
     }
   }, [status, session, router]);
 
-  const handleGoogleSignIn = async () => {
+  const handleGoogleSignIn = () => {
     if (isSubmitting) return;
     setIsSubmitting(true);
-    try {
-      const res = await signIn("google", { callbackUrl: "/dashboard", redirect: true }, { prompt: "select_account" });
-      if (res && res.error) {
-        setIsSubmitting(false);
-      }
-    } catch (err) {
-      console.error("Google sign in exception:", err);
-      setIsSubmitting(false);
-    }
+    signIn("google", { callbackUrl: "/dashboard" }, { prompt: "select_account" });
   };
 
   return (
